@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BaseCalss	test/color.cpp	/^class BaseCalss:$/;"	c	file:
+Class	test/color2.cpp	/^    Class(T val, typename std::enable_if<std::is_floating_point<T>::value, T>::type* = 0)$/;"	f	class:Class
+Class	test/color2.cpp	/^    Class(int val): value(val) {$/;"	f	class:Class	file:
+Class	test/color2.cpp	/^class Class {$/;"	c	file:
+Function	test/color2.cpp	/^void Class::Function(double variable) {$/;"	f	class:Class
+HiLink	after/syntax/cpp.vim	/^    command -nargs=+ HiLink hi def link <args>$/;"	c
+HiLink	after/syntax/cpp.vim	/^    command -nargs=+ HiLink hi link <args>$/;"	c
+a	test/color.cpp	/^    return b > a;$/;"	v
+aClass	test/color.cpp	/^Aclass<T> aClass = bClass->getThing();$/;"	v	typeref:class:BaseCalss
+b	test/color2.cpp	/^uint32_t b = static_cast<uint8_t>(a);$/;"	v
+did_cpp_syntax_inits	after/syntax/cpp.vim	/^    let did_cpp_syntax_inits = 1$/;"	v
+f	test/color.cpp	/^AClass<T>(Fred f);$/;"	v
+f	test/color.cpp	/^AClass<T>(Fred<T> f);$/;"	v
+f	test/color.cpp	/^AClass<T>(Fred<T>::List f);$/;"	v
+f	test/color.cpp	/^getThing<T>(Fred f);$/;"	v
+f	test/color.cpp	/^getThing<T>(Fred<T> f);$/;"	v
+f	test/color.cpp	/^getThing<T>(Fred<T>::List f);$/;"	v
+func	test/color2.cpp	/^void func<std::map<std::string, std::string<double>>>() {$/;"	f
+j	test/color2.cpp	/^char j = reinterpret_cast<char>(k);$/;"	v
+operator <	test/color2.cpp	/^bool operator<(const ConnectionString& other) const {$/;"	f
+s:needs_cppstructure_match	after/syntax/cpp.vim	/^	let s:needs_cppstructure_match += 1$/;"	v
+s:needs_cppstructure_match	after/syntax/cpp.vim	/^	let s:needs_cppstructure_match += 2$/;"	v
+s:needs_cppstructure_match	after/syntax/cpp.vim	/^let s:needs_cppstructure_match = 0$/;"	v
