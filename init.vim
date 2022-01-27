@@ -1,6 +1,13 @@
+" Neovim plugin installation, powered by vim-plug
 call plug#begin()
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jackguo380/vim-lsp-cxx-highlight'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'romgrk/barbar.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'NLKNguyen/papercolor-theme'
+
 call plug#end()
 
 "set runtimepath^=~/.vim runtimepath+=~/.vim/after
@@ -8,10 +15,10 @@ call plug#end()
 
 set clipboard^=unnamed,unnamedplus
 
+set mouse=a
 nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
 vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -19,6 +26,21 @@ if has('nvim')
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
+
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = true,
+  },
+}
+EOF
+
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -210,11 +232,11 @@ set t_Co=256
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment
 " let g:gruvbox_guisp_fallback="bg"
-colorscheme gruvbox
-let g:airline_theme='gruvbox'
+colorscheme sitruuna
+"let g:airline_theme='gruvbox'
 
-let g:materialmonokai_italic=1
-let g:materialmonokai_subtle_spell=1
+"let g:materialmonokai_italic=1
+"let g:materialmonokai_subtle_spell=1
 set background=light
 
 " CTRLP FuzzyFinder ignore list
@@ -262,7 +284,7 @@ hi def link MyTodo Todo
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
 
 " vimgrep shortcut search for the athena project
-command -nargs=1 F vimgrep /<args>/g game/**/*.cpp platform/**/*.cpp game/**/*.hpp platform/**/*.hpp | copen
+command -nargs=1 F vimgrep /<args>/g G:/athena/game/**/*.cpp G:/athena/platform/**/*.cpp G:/athena/game/**/*.hpp G:/athena/platform/**/*.hpp | copen
 
 " Binds Ctrl-R to open the word under the cursor for replacement
 nnoremap <c-o> :%s/\<<C-r><C-w>\>//g<Left><Left>
