@@ -7,6 +7,12 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'kevinhwang91/nvim-bqf'
+Plug 'ahmedkhalf/project.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+
 
 call plug#end()
 
@@ -27,8 +33,35 @@ else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
+" Tab key allows us to skip to the next parameter in an autocomplete
+let g:coc_snippet_next = '<tab>'
 
-lua <<EOF
+" TELESCOPE CONFIG
+lua << EOF
+require("telescope").setup{ defaults = { file_ignore_patterns = {"node_modules", ".cache", ".git\\"} } }
+EOF
+
+" Find files using Telescope command-line sugar.
+nnoremap <c-f> <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+nnoremap <leader>fp <cmd>Telescope projects<cr>
+
+
+" PROJECT NVIM CONFIG
+lua << EOF
+  require("project_nvim").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+  require('telescope').load_extension('projects')
+EOF
+
+
+" TREESITTER CONFIG
+lua << EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
@@ -245,7 +278,7 @@ set wildignore+=*.o
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 " remap CTRLP FuzzyFind command
-let g:ctrlp_map = '<c-f>'
+" let g:ctrlp_map = '<c-f>'
 " file and directory types to ignore in CTRLP find results
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|vs)$',
