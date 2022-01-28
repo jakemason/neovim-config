@@ -11,7 +11,6 @@ Plug 'kevinhwang91/nvim-bqf'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 
 call plug#end()
@@ -36,9 +35,35 @@ endif
 " Tab key allows us to skip to the next parameter in an autocomplete
 let g:coc_snippet_next = '<tab>'
 
+let bufferline = get(g:, 'bufferline', {})
+let bufferline.icons = "buffer_number_with_icon"
+
 " TELESCOPE CONFIG
 lua << EOF
-require("telescope").setup{ defaults = { file_ignore_patterns = {"node_modules", ".cache", ".git\\"} } }
+local previewers = require("telescope.previewers")
+
+local new_maker = function(filepath, bufnr, opts)
+  opts = opts or {}
+
+  filepath = vim.fn.expand(filepath)
+  vim.loop.fs_stat(filepath, function(_, stat)
+    if not stat then return end
+    if stat.size > 100000 then
+      return
+    else
+      previewers.buffer_previewer_maker(filepath, bufnr, opts)
+    end
+  end)
+end
+
+require("telescope").setup{ 
+    defaults = {
+        buffer_previewer_maker = new_maker,
+        file_ignore_patterns = {
+            "node_modules", ".cache", ".git\\", ".vs", "*.pdb","*.obj", "*.ilk", "*.dll", "*.png" 
+        }
+    } 
+}
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -56,7 +81,6 @@ lua << EOF
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
   }
-  require('telescope').load_extension('projects')
 EOF
 
 
@@ -72,6 +96,10 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = true,
   },
 }
+EOF
+
+lua << EOF
+  require('telescope').load_extension('projects')
 EOF
 
 
@@ -265,12 +293,12 @@ set t_Co=256
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment
 " let g:gruvbox_guisp_fallback="bg"
-colorscheme sitruuna
 "let g:airline_theme='gruvbox'
 
 "let g:materialmonokai_italic=1
 "let g:materialmonokai_subtle_spell=1
-set background=light
+colorscheme everforest
+set background=dark
 
 " CTRLP FuzzyFinder ignore list
 set wildignore+=*/EASTL/*
@@ -286,7 +314,7 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 " We get this weird 'black line' display bug..let's see if this fixes it
-au BufEnter * :set background=light
+au BufEnter * :set background=dark
 
 " How many lines should be searched for context
 let g:hasksyn_indent_search_backward = 100
@@ -319,29 +347,5 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 " vimgrep shortcut search for the athena project
 command -nargs=1 F vimgrep /<args>/g G:/athena/game/**/*.cpp G:/athena/platform/**/*.cpp G:/athena/game/**/*.hpp G:/athena/platform/**/*.hpp | copen
 
-" Binds Ctrl-R to open the word under the cursor for replacement
-nnoremap <c-o> :%s/\<<C-r><C-w>\>//g<Left><Left>
-
-function ProjectReplace(term)
-    execute "vimgrep /". a:term ."/g game/**/*.cpp platform/**/*.cpp game/**/*.hpp platform/**/*.hpp | copen"
-    call feedkeys(":cdo %s/\\<".a:term."\\>/")
-endfunction
-
-nnoremap <c-p> :call ProjectReplace("<C-r><C-w>")<CR>
-
-
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
-" For some reason I have to do "syntax on" after RainbowParentheses to get them
-" to apply. Really need to investigate why this is needed.
-" BUG: If I uncomment this below, my custom FIXME, BUG, NOTE highlighting stops
-" working :/
-" autocmd BufWritePost,BufWrite,VimEnter,BufReadPre,BufWinEnter,FocusGained,WinEnter * RainbowParentheses
-" autocmd BufWritePost,BufWrite,VimEnter,BufReadPre,BufWinEnter,FocusGained,WinEnter * syntax on
-
-
-" Automatically wipe a buffer when we leave it. While this is pretty hardcore,
-" I think it'll be worth it in the end. For example, this prevents CtrlP from
-" filling buffer list with every open file which brings vim's speed to a crawl.
-" autocmd BufLeave * :bw
-
