@@ -60,7 +60,15 @@ require("telescope").setup{
     defaults = {
         buffer_previewer_maker = new_maker,
         file_ignore_patterns = {
-            "node_modules", ".cache", ".git\\", ".vs", "*.pdb","*.obj", "*.ilk", "*.dll", "*.png" 
+            "node_modules", 
+            ".cache",
+            ".git\\",
+            ".vs", 
+            "*.pdb",
+            "*.obj", 
+            "*.ilk", 
+            "*.dll", 
+            "*.png", 
         }
     } 
 }
@@ -268,13 +276,6 @@ set smartcase
 set showmatch
 map <leader><space> :let @/=''<cr> " clear search
 
-" Remap help key.
-inoremap <F1> <ESC>:set invfullscreen<CR>a
-nnoremap <F1> :set invfullscreen<CR>
-vnoremap <F1> :set invfullscreen<CR>
-
-" Textmate holdouts
-
 " Formatting
 map <leader>q gqip
 
@@ -288,42 +289,23 @@ map <leader>l :set list!<CR> " Toggle tabs and EOL
 " Color scheme (terminal)
 set termguicolors
 set t_Co=256
-" let g:solarized_termcolors=256
-" let g:solarized_termtrans=1
-" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
-" in ~/.vim/colors/ and uncomment
-" let g:gruvbox_guisp_fallback="bg"
 "let g:airline_theme='gruvbox'
 
-"let g:materialmonokai_italic=1
-"let g:materialmonokai_subtle_spell=1
 colorscheme everforest
 set background=dark
 
 " CTRLP FuzzyFinder ignore list
-set wildignore+=*/EASTL/*
-set wildignore+=*.o
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+" set wildignore+=*/EASTL/*
+" set wildignore+=*.o
+" set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 " remap CTRLP FuzzyFind command
 " let g:ctrlp_map = '<c-f>'
 " file and directory types to ignore in CTRLP find results
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn|vs)$',
-  \ 'file': '\v\.(exe|so|dll|pdb|lib|ilk|exp|obj|lastbuildstate|vcxproj|vcxproj.filters|sln|o|cmake|tlog|a|la)$',
-  \ }
-
-" We get this weird 'black line' display bug..let's see if this fixes it
-" au BufEnter * :set background=dark
-
-" How many lines should be searched for context
-let g:hasksyn_indent_search_backward = 100
- 
-" Should we try to de-indent after a return
-let g:hasksyn_dedent_after_return = 1
- 
-" Should we try to de-indent after a catchall case in a case .. of
-let g:hasksyn_dedent_after_catchall_case = 1
+"let g:ctrlp_custom_ignore = {
+"  \ 'dir':  '\v[\/]\.(git|hg|svn|vs)$',
+"  \ 'file': '\v\.(exe|so|dll|pdb|lib|ilk|exp|obj|lastbuildstate|vcxproj|vcxproj.filters|sln|o|cmake|tlog|a|la)$',
+"  \ }
 
 " Custom word highlighting
 augroup vimrc_todo
@@ -343,9 +325,6 @@ hi def link MyTodo Todo
 " NOTE: Using a check here to make sure that window-specific location-lists
 " aren't effected, as they use the same `FileType` as quickfix-lists.
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
-
-" vimgrep shortcut search for the athena project
-command -nargs=1 F vimgrep /<args>/g G:/athena/game/**/*.cpp G:/athena/platform/**/*.cpp G:/athena/game/**/*.hpp G:/athena/platform/**/*.hpp | copen
 
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
