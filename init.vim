@@ -314,7 +314,7 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 " We get this weird 'black line' display bug..let's see if this fixes it
-au BufEnter * :set background=dark
+" au BufEnter * :set background=dark
 
 " How many lines should be searched for context
 let g:hasksyn_indent_search_backward = 100
