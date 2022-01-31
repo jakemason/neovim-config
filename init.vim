@@ -1,6 +1,7 @@
 " Neovim plugin installation, powered by vim-plug
 call plug#begin()
 
+Plug 'ray-x/lsp_signature.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -11,7 +12,6 @@ Plug 'kevinhwang91/nvim-bqf'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-
 
 call plug#end()
 
@@ -25,6 +25,15 @@ nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
 vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
 " Use <c-space> to trigger completion.
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
@@ -34,6 +43,7 @@ endif
 
 " Tab key allows us to skip to the next parameter in an autocomplete
 let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<s-tab>'
 
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.icons = "buffer_number_with_icon"
@@ -64,11 +74,15 @@ require("telescope").setup{
             ".cache",
             ".git\\",
             ".vs", 
-            "*.pdb",
-            "*.obj", 
-            "*.ilk", 
-            "*.dll", 
-            "*.png", 
+            "%.pdb",
+            "%.obj", 
+            "%.ilk", 
+            "%.swp",
+            "%.so",
+            "%.dll",
+            "%.png",
+            "%.a",
+            "%.la"
         }
     } 
 }
@@ -77,6 +91,7 @@ EOF
 " Find files using Telescope command-line sugar.
 nnoremap <c-f> <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
@@ -289,23 +304,9 @@ map <leader>l :set list!<CR> " Toggle tabs and EOL
 " Color scheme (terminal)
 set termguicolors
 set t_Co=256
-"let g:airline_theme='gruvbox'
 
 colorscheme everforest
 set background=dark
-
-" CTRLP FuzzyFinder ignore list
-" set wildignore+=*/EASTL/*
-" set wildignore+=*.o
-" set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
-" remap CTRLP FuzzyFind command
-" let g:ctrlp_map = '<c-f>'
-" file and directory types to ignore in CTRLP find results
-"let g:ctrlp_custom_ignore = {
-"  \ 'dir':  '\v[\/]\.(git|hg|svn|vs)$',
-"  \ 'file': '\v\.(exe|so|dll|pdb|lib|ilk|exp|obj|lastbuildstate|vcxproj|vcxproj.filters|sln|o|cmake|tlog|a|la)$',
-"  \ }
 
 " Custom word highlighting
 augroup vimrc_todo
@@ -328,3 +329,12 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
+
+set guifont=FiraMono\ Nerd\ Font\ Mono:h18
+let g:neovide_cursor_animation_length=0.0
+let g:neovide_cursor_trail_length=0.10
+let g:neovide_fullscreen = v:true
+let g:neovide_remember_window_size = v:true
+let g:neovide_refresh_rate=140
+
+autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
