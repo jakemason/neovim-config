@@ -25,6 +25,11 @@ nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
 vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -330,7 +335,7 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
 
-set guifont=FiraMono\ Nerd\ Font\ Mono:h18
+set guifont=FiraCode\ Mono:h18
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 let g:neovide_fullscreen = v:true
