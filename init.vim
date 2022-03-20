@@ -11,12 +11,21 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-lua/plenary.nvim'
+Plug 'vimwiki/vimwiki'
+Plug 'rhysd/vim-clang-format'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 call plug#end()
 
 "set runtimepath^=~/.vim runtimepath+=~/.vim/after
 "let &packpath = &runtimepath
+
+let g:neovide_cursor_animation_length=0.0
+let g:neovide_cursor_trail_length=0.10
+let g:neovide_fullscreen=1
+let g:neovide_remember_window_size=1
+let g:neovide_refresh_rate=140
 
 set clipboard^=unnamed,unnamedplus
 
@@ -130,7 +139,6 @@ lua << EOF
   require('telescope').load_extension('projects')
 EOF
 
-
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 function! s:show_documentation()
@@ -166,12 +174,9 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-
-"" ORIGINAL VIMRC FOLLOWS:
-
 set visualbell
 " Turn on syntax highlighting
-" syntax on
+syntax on
 
 map <C-e> :CocCommand clangd.switchSourceHeader<CR>
 
@@ -195,10 +200,10 @@ set cursorline
 set nocompatible
 set fileformat=unix
 " Helps force plugins to load correctly when it is turned back on below
-filetype off
+" filetype off
 
 " Load pathogen plugins
-execute pathogen#infect()
+" execute pathogen#infect()
 
 " vim hardcodes background color erase even if the terminfo file does
 " not contain bce (not to mention that libvte based terminals
@@ -230,7 +235,7 @@ set statusline+=%#warningmsg#
 set statusline+=%*
 
 " For plugins to load correctly
-filetype plugin indent on
+" filetype plugin indent on
 
 " Security
 set modelines=0
@@ -279,7 +284,7 @@ set hidden
 " Rendering
 set ttyfast
 
-" Status bar
+" Always show status bar
 set laststatus=2
 
 " Last line
@@ -335,11 +340,6 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
 
-set guifont=FiraCode\ Mono:h18
-let g:neovide_cursor_animation_length=0.0
-let g:neovide_cursor_trail_length=0.10
-let g:neovide_fullscreen = v:true
-let g:neovide_remember_window_size = v:true
-let g:neovide_refresh_rate=140
+set guifont=JetBrainsMono\ NF:h17
 
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
