@@ -74,7 +74,7 @@ local new_maker = function(filepath, bufnr, opts)
   filepath = vim.fn.expand(filepath)
   vim.loop.fs_stat(filepath, function(_, stat)
     if not stat then return end
-    if stat.size > 100000 then
+    if stat.size > 100000 then -- make sure we don't freeze trying to preview huge files
       return
     else
       previewers.buffer_previewer_maker(filepath, bufnr, opts)
@@ -93,11 +93,14 @@ require("telescope").setup{
             "%.pdb",
             "%.obj", 
             "%.ilk", 
+            "%.ttf", 
+            "%.otf", 
             "%.swp",
             "%.so",
             "%.dll",
             "%.png",
             "%.a",
+            "%.lib",
             "%.la"
         }
     },
@@ -107,6 +110,7 @@ require("telescope").setup{
 }
 
 require("project_nvim").setup {}
+require('telescope').load_extension('projects')
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -116,12 +120,6 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-
-
-" PROJECT NVIM CONFIG
-lua << EOF
-EOF
-
 
 " TREESITTER CONFIG
 lua << EOF
@@ -135,10 +133,6 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = true,
   },
 }
-EOF
-
-lua << EOF
-  require('telescope').load_extension('projects')
 EOF
 
 " Use K to show documentation in preview window.
