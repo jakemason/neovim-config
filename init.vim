@@ -10,10 +10,12 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'ahmedkhalf/project.nvim'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
-Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim' , { 'commit' : '3f45d64e9c47ad9eef273ddab65790a84cced30b' }
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 call plug#end()
@@ -23,16 +25,16 @@ call plug#end()
 
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
-let g:neovide_fullscreen=1
+" let g:neovide_fullscreen=1
 let g:neovide_remember_window_size=1
 let g:neovide_refresh_rate=140
 
 set clipboard^=unnamed,unnamedplus
 
 set mouse=a
-nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+"nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+"inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
+"vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 
 function! s:check_back_space() abort
     let col = col('.') - 1
@@ -98,8 +100,13 @@ require("telescope").setup{
             "%.a",
             "%.la"
         }
-    } 
+    },
+    extensions = {
+        fzf
+    }
 }
+
+require("project_nvim").setup {}
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -113,11 +120,6 @@ nnoremap <leader>fp <cmd>Telescope projects<cr>
 
 " PROJECT NVIM CONFIG
 lua << EOF
-  require("project_nvim").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
 EOF
 
 
@@ -141,6 +143,7 @@ EOF
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> <C-k> :call <SID>show_documentation()<CR>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -178,7 +181,6 @@ set visualbell
 " Turn on syntax highlighting
 syntax on
 
-map <C-e> :CocCommand clangd.switchSourceHeader<CR>
 
 set re=1
 
@@ -202,34 +204,12 @@ set fileformat=unix
 " Helps force plugins to load correctly when it is turned back on below
 " filetype off
 
-" Load pathogen plugins
-" execute pathogen#infect()
-
 " vim hardcodes background color erase even if the terminfo file does
 " not contain bce (not to mention that libvte based terminals
 " incorrectly contain bce in their terminfo files). 
 " This causes incorrect background rendering when using
 " a color theme with a background color.
 let &t_ut=''
-
-" clang setup
-let g:clang_format#code_style = 'llvm'
-let g:clang_format#style_options = {
-            \ "AccessModifierOffset" : -4,
-            \ "AllowShortIfStatementsOnASingleLine" : "true",
-            \ "AlwaysBreakTemplateDeclarations" : "true",
-            \ "Standard" : "C++11",
-            \ "BreakBeforeBraces" : "Allman",
-            \ "AlignConsecutiveAssignments" : "true",
-            \ "AlignTrailingComments" : "true",
-            \ "IndentCaseLabels" : "true",
-            \ "PointerAlignment" : "true",
-            \ "BinPackArguments" : "false",
-            \ "ColumnLimit" : 120,
-            \ "NamespaceIndentation" : "All"}
-
-autocmd FileType c ClangFormatAutoEnable
-autocmd FileType cpp ClangFormatAutoEnable
 
 set statusline+=%#warningmsg#
 set statusline+=%*
@@ -340,6 +320,39 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
 
-set guifont=JetBrainsMono\ NF:h17
+" Set font
+set guifont=JetBrainsMono\ NF:h15
 
+" Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
+
+
+" *******************************************************************
+"                         START C / C++ CONFIG       
+" *******************************************************************
+
+" TODO: Unfortunately, this often just doesn't work for some reason? 
+ map <C-e> :CocCommand clangd.switchSourceHeader<CR>
+" clang setup
+let g:clang_format#code_style = 'llvm'
+let g:clang_format#style_options = {
+            \ "AccessModifierOffset" : -4,
+            \ "AllowShortIfStatementsOnASingleLine" : "true",
+            \ "AlwaysBreakTemplateDeclarations" : "true",
+            \ "Standard" : "C++11",
+            \ "BreakBeforeBraces" : "Allman",
+            \ "AlignConsecutiveAssignments" : "true",
+            \ "AlignTrailingComments" : "true",
+            \ "IndentCaseLabels" : "true",
+            \ "PointerAlignment" : "true",
+            \ "BinPackArguments" : "false",
+            \ "ColumnLimit" : 120,
+            \ "NamespaceIndentation" : "All"}
+
+autocmd FileType c ClangFormatAutoEnable
+autocmd FileType cpp ClangFormatAutoEnable
+
+" *******************************************************************
+"                         END C / C++ CONFIG       
+" *******************************************************************
+
