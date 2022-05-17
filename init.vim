@@ -13,16 +13,13 @@ Plug 'ahmedkhalf/project.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
 Plug 'nvim-lua/plenary.nvim'
+" For some currently unknown reason, we get a fatal error on the latest version
 Plug 'nvim-telescope/telescope.nvim' , { 'commit' : '3f45d64e9c47ad9eef273ddab65790a84cced30b' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 call plug#end()
-
-"set runtimepath^=~/.vim runtimepath+=~/.vim/after
-"let &packpath = &runtimepath
-
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 " let g:neovide_fullscreen=1
@@ -32,9 +29,14 @@ let g:neovide_refresh_rate=140
 set clipboard^=unnamed,unnamedplus
 
 set mouse=a
-"nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-"inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-"vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+
+" shell config -- enable use of powershell
+let &shell = has('win32') ? 'powershell' : 'pwsh'
+let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+set shellquote= shellxquote=
+
 
 function! s:check_back_space() abort
     let col = col('.') - 1
@@ -174,7 +176,6 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 set visualbell
 " Turn on syntax highlighting
 syntax on
-
 
 set re=1
 
