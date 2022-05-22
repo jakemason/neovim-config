@@ -9,6 +9,8 @@ Plug 'romgrk/barbar.nvim', { 'commit' : 'e8c6b72944ba5802eb4bfa9170259abfea2380c
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
@@ -41,6 +43,7 @@ set mouse=a
 "set shellquote= shellxquote=
 
 
+
 function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
@@ -69,10 +72,14 @@ let g:coc_snippet_prev = '<s-tab>'
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.icons = "buffer_number_with_icon"
 
+lua << EOF
+require('gitsigns').setup();
+EOF
+
+
 " TELESCOPE CONFIG
 lua << EOF
 local previewers = require("telescope.previewers")
-
 local new_maker = function(filepath, bufnr, opts)
   opts = opts or {}
 
@@ -213,8 +220,53 @@ set fileformat=unix
 " a color theme with a background color.
 let &t_ut=''
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"               START STATUSLINE CONFIG               "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Always show status bar
+set laststatus=2
+
 set statusline+=%#warningmsg#
 set statusline+=%*
+
+lua << EOF
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'auto',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {},
+    always_divide_middle = true,
+    globalstatus = true,
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+    lualine_x = {'filetype'},
+    lualine_y = {'os.date("%I:%M", os.time())'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
+}
+EOF
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                 END STATUSLINE CONFIG               "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
 
 " For plugins to load correctly
 " filetype plugin indent on
@@ -266,8 +318,6 @@ set hidden
 " Rendering
 set ttyfast
 
-" Always show status bar
-set laststatus=2
 
 " Last line
 set showmode
