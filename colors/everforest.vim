@@ -10,7 +10,7 @@
 let s:configuration = everforest#get_configuration()
 let s:palette = everforest#get_palette(s:configuration.background)
 let s:path = expand('<sfile>:p') " the path of this script
-let s:last_modified = 'Mon Jan 24 04:19:58 UTC 2022'
+let s:last_modified = 'Wed May 18 13:41:26 UTC 2022'
 let g:everforest_loaded_file_types = []
 
 if !(exists('g:colors_name') && g:colors_name ==# 'everforest' && s:configuration.better_performance)
@@ -28,7 +28,7 @@ endif
 " }}}
 " Common Highlight Groups: {{{
 " UI: {{{
-if s:configuration.transparent_background
+if s:configuration.transparent_background == 1
   call everforest#highlight('Normal', s:palette.fg, s:palette.none)
   call everforest#highlight('Terminal', s:palette.fg, s:palette.none)
   if s:configuration.show_eob
@@ -128,6 +128,7 @@ call everforest#highlight('PmenuSel', s:palette.bg0, s:palette.statusline1)
 highlight! link WildMenu PmenuSel
 call everforest#highlight('PmenuThumb', s:palette.none, s:palette.grey0)
 call everforest#highlight('NormalFloat', s:palette.fg, s:palette.bg2)
+call everforest#highlight('FloatBorder', s:palette.grey1, s:palette.bg2)
 call everforest#highlight('Question', s:palette.yellow, s:palette.none)
 if s:configuration.spell_foreground ==# 'none'
   call everforest#highlight('SpellBad', s:palette.none, s:palette.none, 'undercurl', s:palette.red)
@@ -140,13 +141,23 @@ else
   call everforest#highlight('SpellLocal', s:palette.aqua, s:palette.none, 'undercurl', s:palette.aqua)
   call everforest#highlight('SpellRare', s:palette.purple, s:palette.none, 'undercurl', s:palette.purple)
 endif
-call everforest#highlight('StatusLine', s:palette.grey1, s:palette.bg1)
-call everforest#highlight('StatusLineTerm', s:palette.grey1, s:palette.bg1)
-call everforest#highlight('StatusLineNC', s:palette.grey1, s:palette.bg0)
-call everforest#highlight('StatusLineTermNC', s:palette.grey1, s:palette.bg0)
-call everforest#highlight('TabLine', s:palette.grey2, s:palette.bg3)
-call everforest#highlight('TabLineFill', s:palette.grey1, s:palette.bg1)
-call everforest#highlight('TabLineSel', s:palette.bg0, s:palette.statusline1)
+if s:configuration.transparent_background == 2
+  call everforest#highlight('StatusLine', s:palette.grey1, s:palette.none)
+  call everforest#highlight('StatusLineTerm', s:palette.grey1, s:palette.none)
+  call everforest#highlight('StatusLineNC', s:palette.grey1, s:palette.none)
+  call everforest#highlight('StatusLineTermNC', s:palette.grey1, s:palette.none)
+  call everforest#highlight('TabLine', s:palette.grey2, s:palette.bg3)
+  call everforest#highlight('TabLineFill', s:palette.grey1, s:palette.none)
+  call everforest#highlight('TabLineSel', s:palette.bg0, s:palette.statusline1)
+else
+  call everforest#highlight('StatusLine', s:palette.grey1, s:palette.bg1)
+  call everforest#highlight('StatusLineTerm', s:palette.grey1, s:palette.bg1)
+  call everforest#highlight('StatusLineNC', s:palette.grey1, s:palette.bg0)
+  call everforest#highlight('StatusLineTermNC', s:palette.grey1, s:palette.bg0)
+  call everforest#highlight('TabLine', s:palette.grey2, s:palette.bg3)
+  call everforest#highlight('TabLineFill', s:palette.grey1, s:palette.bg1)
+  call everforest#highlight('TabLineSel', s:palette.bg0, s:palette.statusline1)
+endif
 call everforest#highlight('VertSplit', s:palette.bg4, s:palette.none)
 call everforest#highlight('Visual', s:palette.none, s:palette.bg_visual)
 call everforest#highlight('VisualNOS', s:palette.none, s:palette.bg_visual)
@@ -200,6 +211,9 @@ if has('nvim')
   highlight! link LspReferenceText CurrentWord
   highlight! link LspReferenceRead CurrentWord
   highlight! link LspReferenceWrite CurrentWord
+  highlight! link LspCodeLens VirtualTextInfo
+  highlight! link LspCodeLensSeparator VirtualTextHint
+  highlight! link LspSignatureActiveParameter Search
   highlight! link TermCursor Cursor
   highlight! link healthError Red
   highlight! link healthSuccess Green
@@ -353,7 +367,7 @@ endif
 " }}}
 " }}}
 " Terminal: {{{
-if (has('termguicolors') && &termguicolors) || has('gui_running')
+if ((has('termguicolors') && &termguicolors) || has('gui_running')) && !s:configuration.disable_terminal_colors
   " Definition
   let s:terminal = {
         \ 'black':    s:palette.bg3,
@@ -450,6 +464,12 @@ highlight! link TSVariableBuiltin BlueItalic
 " }}}
 " neoclide/coc.nvim {{{
 call everforest#highlight('CocHoverRange', s:palette.none, s:palette.none, 'bold,underline')
+call everforest#highlight('CocSearch', s:palette.green, s:palette.none, 'bold')
+highlight! link CocDisabled Grey
+highlight! link CocSnippetVisual DiffAdd
+highlight! link CocInlayHint Grey
+highlight! link CocNotificationProgress Green
+highlight! link CocNotificationButton PmenuSel
 highlight! link CocSemClass TSType
 highlight! link CocSemEnum TSType
 highlight! link CocSemInterface TSType
@@ -697,6 +717,9 @@ highlight! link Sneak Search
 highlight! link SneakLabel Search
 highlight! link SneakScope DiffText
 " }}}
+" rhysd/clever-f.vim {{{
+highlight! link CleverFDefaultLabel Search
+" }}}
 " terryma/vim-multiple-cursors {{{
 highlight! link multiple_cursors_cursor Cursor
 highlight! link multiple_cursors_visual Visual
@@ -806,6 +829,9 @@ highlight! link agitStatMessage Orange
 highlight! link agitDiffRemove Red
 highlight! link agitDiffAdd Green
 highlight! link agitDiffHeader Purple
+" }}}
+" voldikss/vim-floaterm {{{
+highlight! link FloatermBorder Grey
 " }}}
 if has('nvim')
 " hrsh7th/nvim-cmp {{{
@@ -920,6 +946,23 @@ highlight! link NotifyWARNTitle Yellow
 highlight! link NotifyINFOTitle Green
 highlight! link NotifyDEBUGTitle Grey
 highlight! link NotifyTRACETitle Purple
+" }}}
+" rcarriga/nvim-dap-ui {{{
+call everforest#highlight('DapUIModifiedValue', s:palette.blue, s:palette.none, 'bold')
+call everforest#highlight('DapUIBreakpointsCurrentLine', s:palette.blue, s:palette.none, 'bold')
+highlight! link DapUIScope Blue
+highlight! link DapUIType Purple
+highlight! link DapUIDecoration Blue
+highlight! link DapUIThread Green
+highlight! link DapUIStoppedThread Blue
+highlight! link DapUISource Purple
+highlight! link DapUILineNumber Blue
+highlight! link DapUIFloatBorder Blue
+highlight! link DapUIWatchesEmpty Red
+highlight! link DapUIWatchesValue Green
+highlight! link DapUIWatchesError Red
+highlight! link DapUIBreakpointsPath Blue
+highlight! link DapUIBreakpointsInfo Green
 " }}}
 " glepnir/lspsaga.nvim {{{
 call everforest#highlight('LspFloatWinBorder', s:palette.bg0, s:palette.bg0)
@@ -1100,6 +1143,37 @@ highlight! link VistaPublic Green
 highlight! link VistaProtected Yellow
 highlight! link VistaPrivate Red
 " syn_end }}}
+" syn_begin: aerial {{{
+" https://github.com/stevearc/aerial.nvim
+highlight! link AerialLine CursorLine
+highlight! link AerialGuide LineNr
+highlight! link AerialFileIcon Green
+highlight! link AerialModuleIcon Purple
+highlight! link AerialNamespaceIcon Purple
+highlight! link AerialPackageIcon Purple
+highlight! link AerialClassIcon Red
+highlight! link AerialMethodIcon Green
+highlight! link AerialPropertyIcon Blue
+highlight! link AerialFieldIcon Green
+highlight! link AerialConstructorIcon Green
+highlight! link AerialEnumIcon Yellow
+highlight! link AerialInterfaceIcon Yellow
+highlight! link AerialFunctionIcon Green
+highlight! link AerialVariableIcon Blue
+highlight! link AerialConstantIcon Blue
+highlight! link AerialStringIcon Aqua
+highlight! link AerialNumberIcon Aqua
+highlight! link AerialBooleanIcon Aqua
+highlight! link AerialArrayIcon Aqua
+highlight! link AerialObjectIcon Aqua
+highlight! link AerialKeyIcon Red
+highlight! link AerialNullIcon Aqua
+highlight! link AerialEnumMemberIcon Aqua
+highlight! link AerialStructIcon Yellow
+highlight! link AerialEventIcon Orange
+highlight! link AerialOperatorIcon Orange
+highlight! link AerialTypeParameterIcon Yellow
+" syn_end }}}
 " syn_begin: nerdtree {{{
 " https://github.com/preservim/nerdtree
 highlight! link NERDTreeDir Green
@@ -1149,7 +1223,7 @@ highlight! link NvimTreeLspDiagnosticsHint GreenSign
 " syn_end }}}
 " syn_begin: fern {{{
 " https://github.com/lambdalisue/fern.vim
-highlight! link FernMarkedLine None
+highlight! link FernMarkedLine Purple
 highlight! link FernMarkedText Purple
 highlight! link FernRootSymbol FernRootText
 highlight! link FernRootText Orange
