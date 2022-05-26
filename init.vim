@@ -29,7 +29,6 @@ let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 let g:neovide_remember_window_size=1
 let g:neovide_refresh_rate=140
-
 set clipboard^=unnamed,unnamedplus
 
 set mouse=a
@@ -352,7 +351,9 @@ augroup vimrc_todo
     au!
     au Syntax * syn match MyTodo /\v<(FIXME|STUDY|NOTE|UPDATE|TODO|OPTIMIZE|PERFORMANCE|BUG|HARDCODED|KILL|IMPORTANT|REZ)/ containedin=.*Comment.*
 augroup END
-hi def link MyTodo Todo
+highlight! MyTodo guibg='#404C54'
+highlight! cTodo guibg='#404C54'
+" hi def link MyTodo Todo
 
 
 " Custom command to load our error log file and open cw
