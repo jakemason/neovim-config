@@ -285,7 +285,7 @@ set encoding=utf-8
 
 " White space
 set wrap
-set textwidth=120
+set textwidth=100
 set formatoptions=tcqrn1
 set tabstop=4
 set shiftwidth=4
