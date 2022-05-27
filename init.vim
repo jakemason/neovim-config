@@ -312,7 +312,6 @@ set hidden
 " Rendering
 set ttyfast
 
-
 " Last line
 set showmode
 set showcmd
@@ -343,8 +342,8 @@ map <leader>l :set list!<CR> " Toggle tabs and EOL
 set termguicolors
 set t_Co=256
 
-colorscheme everforest
 set background=dark
+colorscheme everforest
 
 " Custom word highlighting
 augroup vimrc_todo
@@ -393,7 +392,7 @@ let g:clang_format#style_options = {
             \ "IndentCaseLabels" : "true",
             \ "PointerAlignment" : "true",
             \ "BinPackArguments" : "false",
-            \ "ColumnLimit" : 120,
+            \ "ColumnLimit" : 100,
             \ "NamespaceIndentation" : "All"}
 
 autocmd FileType c ClangFormatAutoEnable
