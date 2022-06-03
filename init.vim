@@ -5,7 +5,7 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'romgrk/barbar.nvim', { 'commit' : 'e8c6b72944ba5802eb4bfa9170259abfea2380c7' }
+" Plug 'romgrk/barbar.nvim', { 'commit' : 'e8c6b72944ba5802eb4bfa9170259abfea2380c7' }
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
@@ -22,15 +22,20 @@ Plug 'nvim-telescope/telescope.nvim' , { 'commit' : '3f45d64e9c47ad9eef273ddab65
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'ludovicchabant/vim-gutentags', { 'commit' : '39dc3ee228bb7cc712d95b0130c233451381e3da' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'jakemason/ouroboros' 
 
 call plug#end()
+
 "let g:gutentags_trace = 1
+let g:ouroboros_debug=1
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 let g:neovide_remember_window_size=1
 let g:neovide_refresh_rate=140
 set clipboard^=unnamed,unnamedplus
 
+set showtabline=0
+" set completeopt=menu,preview
 set mouse=a
 " shell config -- enable use of powershell
 " DO NOT USE THIS -- unfortunately, switching to powershell here breaks gutentags + clangformat
@@ -147,17 +152,19 @@ require'nvim-treesitter.configs'.setup {
 EOF
 
 " Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-nnoremap <silent> <C-k> :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
+nnoremap <silent> K :call ShowDocumentation()<CR>
+nnoremap <silent> <C-k> :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
     call CocActionAsync('doHover')
   else
-    execute '!' . &keywordprg . " " . expand('<cword>')
+    call feedkeys('K', 'in')
   endif
 endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
@@ -172,6 +179,8 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
+vnoremap <C-c> "+y
+nnoremap <C-v> "+p
 
 " setup mapping to call :LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
@@ -233,7 +242,7 @@ require('lualine').setup {
     section_separators = { left = '', right = ''},
     disabled_filetypes = {},
     always_divide_middle = true,
-    globalstatus = true,
+    globalstatus = false,
   },
   sections = {
     lualine_a = {'mode'},
@@ -376,9 +385,10 @@ autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
 " *******************************************************************
 "                         START C / C++ CONFIG       
 " *******************************************************************
-
-" TODO: Unfortunately, this often just doesn't work for some reason? 
- map <C-e> :CocCommand clangd.switchSourceHeader<CR>
+"
+" switch between header and implementation
+autocmd! Filetype c,cpp map<buffer> <C-e> :Ouroboros<CR>
+" map <C-e> :Ouroboros<CR>
 " clang setup
 let g:clang_format#code_style = 'llvm'
 let g:clang_format#style_options = {
