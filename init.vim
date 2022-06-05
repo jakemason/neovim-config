@@ -5,7 +5,6 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
-" Plug 'romgrk/barbar.nvim', { 'commit' : 'e8c6b72944ba5802eb4bfa9170259abfea2380c7' }
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
@@ -17,17 +16,17 @@ Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'kdheepak/lazygit.nvim'
-" For some currently unknown reason, we get a fatal error on the latest version
-Plug 'nvim-telescope/telescope.nvim' , { 'commit' : '3f45d64e9c47ad9eef273ddab65790a84cced30b' }
+Plug 'romgrk/barbar.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'ludovicchabant/vim-gutentags', { 'commit' : '39dc3ee228bb7cc712d95b0130c233451381e3da' }
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros' 
 
 call plug#end()
 
 "let g:gutentags_trace = 1
-let g:ouroboros_debug=1
+let g:ouroboros_debug=0
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 let g:neovide_remember_window_size=1
@@ -45,7 +44,6 @@ set mouse=a
 "let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "set shellquote= shellxquote=
-
 
 
 function! s:check_back_space() abort
@@ -179,8 +177,7 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
-vnoremap <C-c> "+y
-nnoremap <C-v> "+p
+
 
 " setup mapping to call :LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
@@ -193,6 +190,10 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 set visualbell
 " Turn on syntax highlighting
 syntax on
+
+" Allows use of Ctrl-C, Ctrl-V to copy/paste from OS clipboard
+vnoremap <C-c> "+y
+nnoremap <C-v> "+p
 
 set re=1
 
@@ -272,7 +273,7 @@ EOF
 
 
 " For plugins to load correctly
-" filetype plugin indent on
+filetype plugin indent on
 
 " Security
 set modelines=0
@@ -363,10 +364,8 @@ highlight! MyTodo guibg='#404C54'
 highlight! cTodo guibg='#404C54'
 " hi def link MyTodo Todo
 
-
 " Custom command to load our error log file and open cw
 :command Err cgetfile err.log | cw
-
 
 " Position the (global) quickfix window at the very bottom of the window
 " (useful for making sure that it appears underneath splits)
@@ -374,7 +373,6 @@ highlight! cTodo guibg='#404C54'
 " NOTE: Using a check here to make sure that window-specific location-lists
 " aren't effected, as they use the same `FileType` as quickfix-lists.
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
-
 
 " Set font
 set guifont=JetBrainsMono\ NF:h15
@@ -385,7 +383,7 @@ autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
 " *******************************************************************
 "                         START C / C++ CONFIG       
 " *******************************************************************
-"
+
 " switch between header and implementation
 autocmd! Filetype c,cpp map<buffer> <C-e> :Ouroboros<CR>
 " map <C-e> :Ouroboros<CR>

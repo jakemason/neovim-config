@@ -1,5 +1,7 @@
 {
   "clangd.path": "~\\AppData\\Local\\coc\\extensions\\coc-clangd-data\\install\\13.0.0\\clangd_13.0.0\\bin\\clangd.exe",
   "clangd.semanticHighlighting": true,
-  "coc.preferences.semanticTokensHighlights": false
+  "coc.preferences.semanticTokensHighlights": false,
+  "clangd.fallbackFlags": [ "-std=c++17" ],
+  "suggest.enablePreview": true,
 }
