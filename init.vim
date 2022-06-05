@@ -1,4 +1,6 @@
-" Neovim plugin installation, powered by vim-plug
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   VIM-PLUG INSTALLS                 "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
 Plug 'ray-x/lsp_signature.nvim'
@@ -25,20 +27,24 @@ Plug 'jakemason/ouroboros'
 
 call plug#end()
 
-"let g:gutentags_trace = 1
 let g:ouroboros_debug=0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   NEOVIDE CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:neovide_cursor_animation_length=0.0
 let g:neovide_cursor_trail_length=0.10
 let g:neovide_remember_window_size=1
 let g:neovide_refresh_rate=140
-set clipboard^=unnamed,unnamedplus
 
-set showtabline=0
-" set completeopt=menu,preview
-set mouse=a
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   SHELL CONFIG                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" !!!DO NOT USE THIS!!! -- unfortunately, switching to powershell here breaks gutentags
+" + clangformat :( Essentially, anything that runs terminal commands gets fucked :(
+
 " shell config -- enable use of powershell
-" DO NOT USE THIS -- unfortunately, switching to powershell here breaks gutentags + clangformat
-" Essentially, anything that runs terminal commands gets fucked :(
 "let &shell = has('win32') ? 'powershell' : 'pwsh'
 "let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
 "let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
@@ -46,6 +52,9 @@ set mouse=a
 "set shellquote= shellxquote=
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                     COC CONFIG                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
@@ -71,15 +80,53 @@ endif
 let g:coc_snippet_next = '<tab>'
 let g:coc_snippet_prev = '<s-tab>'
 
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.icons = "buffer_number_with_icon"
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call ShowDocumentation()<CR>
+nnoremap <silent> <C-k> :call ShowDocumentation()<CR>
 
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   GITSIGNS CONFIG                   "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
 require('gitsigns').setup();
 EOF
 
 
-" TELESCOPE CONFIG
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   TELESCOPE CONFIG                  "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
 local previewers = require("telescope.previewers")
 local new_maker = function(filepath, bufnr, opts)
@@ -135,7 +182,10 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
 
-" TREESITTER CONFIG
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                  TREESITTER CONFIG                  "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -149,85 +199,10 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call ShowDocumentation()<CR>
-nnoremap <silent> <C-k> :call ShowDocumentation()<CR>
-
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-set signcolumn=yes
-
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-
-
-" setup mapping to call :LazyGit
-nnoremap <silent> <leader>gg :LazyGit<CR>
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-set visualbell
-" Turn on syntax highlighting
-syntax on
-
-" Allows use of Ctrl-C, Ctrl-V to copy/paste from OS clipboard
-vnoremap <C-c> "+y
-nnoremap <C-v> "+p
-
-set re=1
-
-" I know this is basically blasphemy in the Vim world, but I can count
-" on one hand the number of times a swapfile has saved me a minor amount
-" of effort, and I can't count the number of times it's slowed down my
-" opening of a file. Sluggishness....begone!
-set noswapfile
-
-set spell
-
-" Ignore case when searching for files with ctrlp, or in files themselves
-set ignorecase
-
-" Forces word wrapping to break on words, rather than on characters
-set linebreak
-
-set cursorline
-set nocompatible
-set fileformat=unix
-" Helps force plugins to load correctly when it is turned back on below
-" filetype off
-
-" vim hardcodes background color erase even if the terminfo file does
-" not contain bce (not to mention that libvte based terminals
-" incorrectly contain bce in their terminfo files). 
-" This causes incorrect background rendering when using
-" a color theme with a background color.
-let &t_ut=''
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"               START STATUSLINE CONFIG               "
+"                  STATUSLINE CONFIG                  "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 " Always show status bar
 set laststatus=2
 
@@ -266,20 +241,62 @@ require('lualine').setup {
 }
 EOF
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                 END STATUSLINE CONFIG               "
+"                   BARBAR CONFIG                     "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
+let bufferline = get(g:, 'bufferline', {})
+let bufferline.icons = "buffer_number_with_icon"
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   LAZYGIT CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" setup mapping to call :LazyGit
+nnoremap <silent> <leader>gg :LazyGit<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                      VIM CONFIG                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" I know this is basically blasphemy in the Vim world, but I can count
+" on one hand the number of times a swapfile has saved me a minor amount
+" of effort, and I can't count the number of times it's slowed down my
+" opening of a file. Sluggishness....begone!
+set noswapfile
+
+set spell
+
+" Ignore case when searching for files with ctrlp, or in files themselves
+set ignorecase
+
+" Forces word wrapping to break on words, rather than on characters
+set linebreak
+
+set cursorline
+set nocompatible
+set fileformat=unix
+" Helps force plugins to load correctly when it is turned back on below
+" filetype off
+
+" vim hardcodes background color erase even if the terminfo file does
+" not contain bce (not to mention that libvte based terminals
+" incorrectly contain bce in their terminfo files). 
+" This causes incorrect background rendering when using
+" a color theme with a background color.
+let &t_ut=''
+
+
+set clipboard^=unnamed,unnamedplus
+set showtabline=0
+set mouse=a
+set syntax=on
 
 " For plugins to load correctly
 filetype plugin indent on
 
 " Security
 set modelines=0
-
-" Show absolute line numbers
-" set number
 
 " turn hybrid line numbers on
 set number relativenumber
@@ -295,13 +312,17 @@ set encoding=utf-8
 
 " White space
 set wrap
-set textwidth=100
+
 set formatoptions=tcqrn1
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
 set noshiftround
+
+"Column width
+set textwidth=100
+set colorcolumn=100 " visualize the column
 
 " Cursor motion
 set scrolloff=3
@@ -312,6 +333,10 @@ runtime! macros/matchit.vim
 " Move up/down editor lines
 nnoremap j gj
 nnoremap k gk
+
+" Allows use of Ctrl-C, Ctrl-V to copy/paste from OS clipboard
+vnoremap <C-c> "+y
+nnoremap <C-v> "+p
 
 " My preferred shortcut to enter insert mode
 nnoremap a i
@@ -380,13 +405,12 @@ set guifont=JetBrainsMono\ NF:h15
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
 
-" *******************************************************************
-"                         START C / C++ CONFIG       
-" *******************************************************************
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                    C/C++ CONFIG                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " switch between header and implementation
 autocmd! Filetype c,cpp map<buffer> <C-e> :Ouroboros<CR>
-" map <C-e> :Ouroboros<CR>
+
 " clang setup
 let g:clang_format#code_style = 'llvm'
 let g:clang_format#style_options = {
@@ -405,8 +429,3 @@ let g:clang_format#style_options = {
 
 autocmd FileType c ClangFormatAutoEnable
 autocmd FileType cpp ClangFormatAutoEnable
-
-" *******************************************************************
-"                         END C / C++ CONFIG       
-" *******************************************************************
-
