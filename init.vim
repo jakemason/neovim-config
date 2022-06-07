@@ -8,23 +8,26 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'NLKNguyen/papercolor-theme'
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'ahmedkhalf/project.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'kdheepak/lazygit.nvim'
-Plug 'romgrk/barbar.nvim'
+" Plug 'romgrk/barbar.nvim'
+
+" Telescope, searching projects, fzf for speed, and session management
+Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'rmagatti/auto-session'
+Plug 'rmagatti/session-lens'
+
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros' 
-
 call plug#end()
 
 let g:ouroboros_debug=0
@@ -50,6 +53,14 @@ let g:neovide_refresh_rate=140
 "let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "set shellquote= shellxquote=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   VIM WIKI CONFIG                   "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua<<EOF
+local config_directory = vim.fn.stdpath('config')
+vim.g.vimwiki_list = {{ path = config_directory .. '/wiki' }}
+EOF
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -171,7 +182,11 @@ require("telescope").setup{
 }
 
 require("project_nvim").setup {}
-require('telescope').load_extension('projects')
+require("auto-session").setup {
+    auto_session_enable_last_session = true,
+}
+require('telescope').load_extension("projects")
+require("telescope").load_extension("session-lens")
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -181,6 +196,7 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
+nnoremap <leader>fs <cmd>SearchSession<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -266,6 +282,7 @@ nnoremap <silent> <leader>gg :LazyGit<CR>
 set noswapfile
 
 set spell
+set sessionoptions+=winpos,terminal,folds,winsize
 
 " Ignore case when searching for files with ctrlp, or in files themselves
 set ignorecase

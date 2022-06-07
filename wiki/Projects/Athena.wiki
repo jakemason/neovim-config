@@ -1,0 +1,19 @@
+= Ideas =
+
+- [ ] Save / Store 1 item for the next run
+    - I had an idea that we would allow players to save 1 item per run to be able to "pass" it onto
+      their next character. The in-world explanation for this would be some sort of mirror/portal
+      that appears in one of the early towns. It could feature a description as follows:
+      
+      "As you approach the shimmering mirror you notice that the reflection is you... and not you.
+      Nearing the surface, you notice the shimmering figure seems to be offering you something.
+      However, as you reach out your hand the figure pulls away. You surmise that it's not
+      offering a gift... instead, it wants to _trade_.
+      
+      [1] - Hand over an item.
+      [2] - Walk away.
+      
+      When you trade an item over, the figure will in turn trade you _the last item you traded_ to
+      it. I should also make the _first_ instance of this trade reward you in some way so that the
+      player is encouraged to try it again on subsequent runs because the purpose of the mirror
+      won't become clear until the second usage at the earliest.
