@@ -3,7 +3,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin()
 
-Plug 'ray-x/lsp_signature.nvim'
+Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -13,9 +13,7 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'nvim-lua/plenary.nvim'
 Plug 'kdheepak/lazygit.nvim'
-" Plug 'romgrk/barbar.nvim'
 
 " LSP support, autocompletion via nvim-cmp
 Plug 'williamboman/nvim-lsp-installer'
@@ -28,6 +26,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'p00f/clangd_extensions.nvim'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'onsails/lspkind.nvim'
 
 " Telescope, searching projects, fzf for speed, and session management
@@ -45,6 +44,9 @@ call plug#end()
 let g:ouroboros_debug=0
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                     LSP CONFIG                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set completeopt=menu,menuone,noselect
 
 lua <<EOF
@@ -98,6 +100,7 @@ lua <<EOF
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
+      { name = 'nvim_lsp_signature_help' },
       { name = 'vsnip' }, -- For vsnip users.
     }, {
       { name = 'buffer' },
@@ -130,12 +133,8 @@ lua <<EOF
     automatic_installation = true
   }
   
-  local lspconfig = require('lspconfig')
   local on_attach = function(client, bufnr)
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-
-    require "lsp_signature".on_attach()  -- Note: add in lsp client on-attach
   end
 
   require("clangd_extensions").setup{
@@ -143,8 +142,16 @@ lua <<EOF
       on_attach = on_attach,
       autostart = true,
   }
-EOF
 
+  local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+  for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+  end
+
+EOF
+" show documentation on <Shift-k>
+nnoremap <silent> K :lua vim.lsp.buf.hover()<CR>
 
 
 
@@ -277,6 +284,7 @@ set laststatus=2
 set statusline+=%#warningmsg#
 set statusline+=%*
 
+
 lua << EOF
 require('lualine').setup {
   options = {
@@ -308,13 +316,6 @@ require('lualine').setup {
   extensions = {}
 }
 EOF
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                   BARBAR CONFIG                     "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.icons = "buffer_number_with_icon"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
