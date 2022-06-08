@@ -1,6 +1,9 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
+" For plugins to load correctly
+filetype plugin indent on
+
 call plug#begin()
 
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
@@ -34,7 +37,7 @@ Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'rmagatti/auto-session'
-Plug 'rmagatti/session-lens'
+" Plug 'rmagatti/session-lens'
 
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
@@ -51,8 +54,23 @@ set completeopt=menu,menuone,noselect
 
 lua <<EOF
   -- Setup nvim-cmp.
-  local cmp = require'cmp'
+vim.lsp.set_log_level("debug")
+  -- Diagnostic keymaps
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+  vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+
+  local cmp = require('cmp')
   local lspkind = require('lspkind')
+
+  local has_words_before = function()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  end
+  
+  local feedkey = function(key, mode)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+  end
 
   cmp.setup({
     snippet = {
@@ -74,7 +92,7 @@ lua <<EOF
         },
     },
     window = {
-      -- completion = cmp.config.window.bordered(),
+       completion = cmp.config.window.bordered(),
       -- documentation = cmp.config.window.bordered(),
     },
     formatting = {
@@ -91,12 +109,44 @@ lua <<EOF
     },
     mapping = cmp.mapping.preset.insert({
       ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4), 
       ['<C-Space>'] = cmp.mapping.complete(),
+      --["<C-Space>"] = cmp.mapping(cmp.mapping.complete({
+      --  reason = cmp.ContextReason.Auto,
+      --}), {"i", "c"}),
       ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-      ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-      ['<Tab>'] = cmp.mapping.select_next_item(),
+--      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+--      ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+--      ['<Tab>'] = cmp.mapping.select_next_item(),
+
+
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+
+    -- Use Tab and Shift-Tab to browse through the suggestions.
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif vim.fn["vsnip#available"](1) == 1 then
+        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+
+    ["<S-Tab>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, { "i", "s" }),
+
+
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -135,12 +185,16 @@ lua <<EOF
   
   local on_attach = function(client, bufnr)
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
+    vim.keymap.set('n', '<leader>f', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
+    vim.keymap.set({"n", "v"}, "K", vim.lsp.buf.hover, { buffer = 0 }) -- show documentation
   end
 
   require("clangd_extensions").setup{
-      capabilities = capabilities,
-      on_attach = on_attach,
-      autostart = true,
+    server = { 
+        capabilities = capabilities,
+        on_attach = on_attach,
+        autostart = true,
+    },
   }
 
   local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -150,9 +204,6 @@ lua <<EOF
   end
 
 EOF
-" show documentation on <Shift-k>
-nnoremap <silent> K :lua vim.lsp.buf.hover()<CR>
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -240,12 +291,15 @@ require("telescope").setup{
     }
 }
 
+-- Session onformation
+vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 require("project_nvim").setup {}
 require("auto-session").setup {
     auto_session_enable_last_session = true,
 }
+
 require('telescope').load_extension("projects")
-require("telescope").load_extension("session-lens")
+-- require("telescope").load_extension("session-lens")
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -335,7 +389,7 @@ nnoremap <silent> <leader>gg :LazyGit<CR>
 set noswapfile
 
 set spell
-set sessionoptions+=winpos,terminal,folds,winsize
+
 
 " Ignore case when searching for files with ctrlp, or in files themselves
 set ignorecase
@@ -346,8 +400,6 @@ set linebreak
 set cursorline
 set nocompatible
 set fileformat=unix
-" Helps force plugins to load correctly when it is turned back on below
-" filetype off
 
 " vim hardcodes background color erase even if the terminfo file does
 " not contain bce (not to mention that libvte based terminals
@@ -366,8 +418,6 @@ set showtabline=0
 set mouse=a
 set syntax=on
 
-" For plugins to load correctly
-filetype plugin indent on
 
 " Security
 set modelines=0
