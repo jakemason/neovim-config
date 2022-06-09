@@ -36,9 +36,9 @@ Plug 'onsails/lspkind.nvim'
 Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'rmagatti/auto-session'
+" Plug 'rmagatti/auto-session'
 " Plug 'rmagatti/session-lens'
-
+Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros' 
@@ -53,8 +53,6 @@ let g:ouroboros_debug=0
 set completeopt=menu,menuone,noselect
 
 lua <<EOF
-  -- Setup nvim-cmp.
-vim.lsp.set_log_level("debug")
   -- Diagnostic keymaps
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -115,44 +113,44 @@ vim.lsp.set_log_level("debug")
       --  reason = cmp.ContextReason.Auto,
       --}), {"i", "c"}),
       ['<C-e>'] = cmp.mapping.abort(),
---      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
---      ['<S-Tab>'] = cmp.mapping.select_prev_item(),
---      ['<Tab>'] = cmp.mapping.select_next_item(),
+      --['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      --['<S-Tab>'] = cmp.mapping.select_prev_item(),
+      --['<Tab>'] = cmp.mapping.select_next_item(),
 
 
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
+      ['<CR>'] = cmp.mapping.confirm {
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = true,
+      },
 
     -- Use Tab and Shift-Tab to browse through the suggestions.
-    ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif vim.fn["vsnip#available"](1) == 1 then
-        feedkey("<Plug>(vsnip-expand-or-jump)", "")
-      elseif has_words_before() then
-        cmp.complete()
-      else
-        fallback()
-      end
-    end, { "i", "s" }),
-
-    ["<S-Tab>"] = cmp.mapping(function()
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-        feedkey("<Plug>(vsnip-jump-prev)", "")
-      end
-    end, { "i", "s" }),
-
-
+      ["<Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        elseif vim.fn["vsnip#available"](1) == 1 then
+          feedkey("<Plug>(vsnip-expand-or-jump)", "")
+        elseif has_words_before() then
+          cmp.complete()
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
+  
+      ["<S-Tab>"] = cmp.mapping(function()
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+          feedkey("<Plug>(vsnip-jump-prev)", "")
+        end
+      end, { "i", "s" }),
     }),
+
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
       { name = 'nvim_lsp_signature_help' },
       { name = 'vsnip' }, -- For vsnip users.
-    }, {
+    }, 
+    {
       { name = 'buffer' },
     })
   })
@@ -185,7 +183,7 @@ vim.lsp.set_log_level("debug")
   
   local on_attach = function(client, bufnr)
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.keymap.set('n', '<leader>f', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
+    vim.keymap.set('n', '<leader>df', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
     vim.keymap.set({"n", "v"}, "K", vim.lsp.buf.hover, { buffer = 0 }) -- show documentation
   end
 
@@ -227,6 +225,7 @@ let g:neovide_refresh_rate=140
 "let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 "set shellquote= shellxquote=
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM WIKI CONFIG                   "
@@ -294,9 +293,9 @@ require("telescope").setup{
 -- Session onformation
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 require("project_nvim").setup {}
-require("auto-session").setup {
-    auto_session_enable_last_session = true,
-}
+--require("auto-session").setup {
+--    auto_session_enable_last_session = true,
+--}
 
 require('telescope').load_extension("projects")
 -- require("telescope").load_extension("session-lens")
@@ -528,6 +527,7 @@ set guifont=JetBrainsMono\ NF:h15
 
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    C/C++ CONFIG                     "
