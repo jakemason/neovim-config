@@ -41,7 +41,8 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-Plug 'jakemason/ouroboros' 
+Plug 'jakemason/ouroboros'
+
 call plug#end()
 
 let g:ouroboros_debug=0
@@ -485,6 +486,9 @@ set showmatch
 map <leader><space> :let @/=''<cr> " clear search
 " Clear last search highlighting when hitting space
 map <space> :noh<cr>
+
+" Quickly source Session.vim in cwd
+map <leader>s :source Session.vim<CR>
 
 " Formatting
 map <leader>q gqip
