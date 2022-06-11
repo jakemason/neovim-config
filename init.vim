@@ -186,8 +186,41 @@ lua <<EOF
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     vim.keymap.set('n', '<leader>df', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
     vim.keymap.set({"n", "v"}, "K", vim.lsp.buf.hover, { buffer = 0 }) -- show documentation
+
+    -- autoformat any buffer running an LSP
+    vim.api.nvim_command[[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
   end
 
+
+  local lspconfig = require('lspconfig')
+
+
+  local servers = {
+      "intelephense",
+  	"clangd",
+  	"tsserver",
+  	"pyright",
+  	"sumneko_lua",
+  	"eslint",
+  	"bashls",
+  	"yamlls",
+  	"jsonls",
+  	"cssls",
+  	"html",
+  	"graphql",
+  	"tailwindcss",
+    "vimls"
+  }
+  
+  for _, lsp in pairs(servers) do
+  	lspconfig[lsp].setup({
+  		on_attach = on_attach,
+  		capabilities = capabilities,
+  	})
+  end
+
+  -- clangd is called by the below which follows a separate format
+  -- than the servers above.
   require("clangd_extensions").setup{
     server = { 
         capabilities = capabilities,
@@ -251,7 +284,7 @@ EOF
 lua << EOF
 local previewers = require("telescope.previewers")
 local new_maker = function(filepath, bufnr, opts)
-  opts = opts or {}
+ opts = opts or {}
 
   filepath = vim.fn.expand(filepath)
   vim.loop.fs_stat(filepath, function(_, stat)
@@ -270,7 +303,7 @@ require("telescope").setup{
         file_ignore_patterns = {
             "node_modules", 
             ".cache",
-            ".git\\",
+            ".git/",
             ".vs", 
             "%.pdb",
             "%.obj", 
@@ -281,6 +314,7 @@ require("telescope").setup{
             "%.so",
             "%.dll",
             "%.png",
+            "%.gif",
             "%.a",
             "%.lib",
             "%.la"
@@ -303,7 +337,10 @@ require('telescope').load_extension("projects")
 EOF
 
 " Find files using Telescope command-line sugar.
-nnoremap <c-f> <cmd>Telescope find_files<cr>
+" nnoremap <c-f> <cmd>Telescope find_files<cr>
+" nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <c-f> <cmd>Telescope git_files<cr>
+nnoremap <leader>ff <cmd>Telescope git_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
