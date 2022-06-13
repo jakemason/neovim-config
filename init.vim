@@ -1,4 +1,4 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -33,9 +33,17 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
 " twig isn't natively supported by tree-sitter yet
-" Plug 'lumiliet/vim-twig'
+Plug 'lumiliet/vim-twig'
 " emmet is a must for web work
-" Plug 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim'
+" automatically change matching tag in html
+Plug 'AndrewRadev/tagalong.vim'
+" close html tags automatically
+Plug 'alvan/vim-closetag'
+
+Plug 'JulesWang/css.vim' 
+Plug 'cakebaker/scss-syntax.vim'
+
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'ahmedkhalf/project.nvim'
@@ -52,6 +60,26 @@ call plug#end()
 
 let g:ouroboros_debug=0
 
+let g:user_emmet_leader_key='<C-Z>'
+let g:user_emmet_mode='a' 
+
+lua<<EOF
+
+  local config_directory = vim.fn.stdpath('config')
+  vim.keymap.set('n', '<leader><leader>s', '<cmd>source ' .. config_directory .. '/after/plugin/luasnip.lua<CR>')
+  local luasnip = require('luasnip')
+
+  vim.keymap.set({"i", "s" }, "<c-k>", function()
+      if luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
+      end
+  end, {silent = true })
+
+  luasnip.config.set_config {
+    history = true,
+    updateevents = "TextChanged, TextChangedI"
+  }
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     LSP CONFIG                      "
@@ -120,8 +148,6 @@ lua <<EOF
       --}), {"i", "c"}),
       ['<C-e>'] = cmp.mapping.abort(),
       --['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-      --['<S-Tab>'] = cmp.mapping.select_prev_item(),
-      --['<Tab>'] = cmp.mapping.select_next_item(),
 
 
       ['<CR>'] = cmp.mapping.confirm {
@@ -203,25 +229,108 @@ lua <<EOF
 
 
   local servers = {
---      "intelephense",
+    "intelephense",
 --  	"tsserver",
 --  	"pyright",
---  	"sumneko_lua",
+    "sumneko_lua",
   	"eslint",
   	"bashls",
 --  	"yamlls",
---  	"jsonls",
---  	"cssls",
---  	"html",
+  	"jsonls",
+  	"cssls",
+  	"html",
 --  	"graphql",
 --  	"tailwindcss",
 --    "vimls"
   }
-  
+
+  local server_configs = {
+    intelephense = {
+      intelephense = {
+        stubs = { 
+          "bcmath",
+          "bz2",
+          "calendar",
+          "Core",
+          "curl",
+          "date",
+          "dba",
+          "dom",
+          "enchant",
+          "fileinfo",
+          "filter",
+          "ftp",
+          "gd",
+          "gettext",
+          "hash",
+          "iconv",
+          "imap",
+          "intl",
+          "json",
+          "ldap",
+          "libxml",
+          "mbstring",
+          "mcrypt",
+          "mysql",
+          "mysqli",
+          "password",
+          "pcntl",
+          "pcre",
+          "PDO",
+          "pdo_mysql",
+          "Phar",
+          "readline",
+          "recode",
+          "Reflection",
+          "regex",
+          "session",
+          "SimpleXML",
+          "soap",
+          "sockets",
+          "sodium",
+          "SPL",
+          "standard",
+          "superglobals",
+          "sysvsem",
+          "sysvshm",
+          "tokenizer",
+          "xml",
+          "xdebug",
+          "xmlreader",
+          "xmlwriter",
+          "yaml",
+          "zip",
+          "zlib",
+          "wordpress",
+          "woocommerce",
+          "acf-pro",
+          "wordpress-globals",
+          "wp-cli",
+          "genesis",
+          "polylang"
+        },
+        environment = {
+          -- WordPress' older style makes it incompatible with LSP configs. These stubs fix that.
+          -- First, you need to install them somewhere:
+          -- composer require php-stubs/wordpress-globals php-stubs/wordpress-stubs php-stubs/woocommerce-stubs php-stubs/acf-pro-stubs wpsyntex/polylang-stubs php-stubs/genesis-stubs php-stubs/wp-cli-stubs
+          -- Then, simple include the path to them:
+          includePaths = 'E:/DevApps/lsp_stubs/vendor/php-stubs/'
+        },
+      }
+    }
+  }
+
+
+
   for _, lsp in pairs(servers) do
+    local lsp_settings = {}
+    if(server_configs[lsp] ~= {}) then
+      lsp_settings = server_configs[lsp]
+    end
   	lspconfig[lsp].setup({
   		on_attach = on_attach,
   		capabilities = capabilities,
+      settings = lsp_settings
   	})
   end
 
@@ -247,11 +356,12 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   NEOVIDE CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:neovide_cursor_animation_length=0.0
-let g:neovide_cursor_trail_length=0.10
-let g:neovide_remember_window_size=1
-let g:neovide_refresh_rate=140
-
+if exists("g:neovide") 
+  let g:neovide_cursor_animation_length=0.0
+  let g:neovide_cursor_trail_length=0.10
+  let g:neovide_remember_window_size=1
+  let g:neovide_refresh_rate=140
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   SHELL CONFIG                      "
@@ -331,7 +441,7 @@ require("telescope").setup{
     }
 }
 
--- Session onformation
+-- Session information
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 require("project_nvim").setup {}
 --require("auto-session").setup {
@@ -352,7 +462,7 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-nnoremap <leader>fs <cmd>SearchSession<cr>
+" nnoremap <leader>fs <cmd>SearchSession<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -362,6 +472,7 @@ lua << EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
+    disable = { "scss", "css" },
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -481,9 +592,9 @@ set encoding=utf-8
 set wrap
 
 set formatoptions=tcqrn1
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set expandtab
 set noshiftround
 
@@ -545,9 +656,10 @@ map <leader>l :set list!<CR> " Toggle tabs and EOL
 
 " Color scheme (terminal)
 set termguicolors
-set t_Co=256
+"set t_Co=256
 
 set background=dark
+let g:everforest_enable_italic=1
 colorscheme everforest
 
 " Custom word highlighting
@@ -575,6 +687,16 @@ set guifont=JetBrainsMono\ NF:h15
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
 
+
+function! SynStack ()
+    for i1 in synstack(line("."), col("."))
+        let i2 = synIDtrans(i1)
+        let n1 = synIDattr(i1, "name")
+        let n2 = synIDattr(i2, "name")
+        echo n1 "->" n2
+    endfor
+endfunction
+map <leader>hg :call SynStack()<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    C/C++ CONFIG                     "

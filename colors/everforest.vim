@@ -8,9 +8,9 @@
 
 " Initialization: {{{
 let s:configuration = everforest#get_configuration()
-let s:palette = everforest#get_palette(s:configuration.background)
+let s:palette = everforest#get_palette(s:configuration.background, s:configuration.colors_override)
 let s:path = expand('<sfile>:p') " the path of this script
-let s:last_modified = 'Wed May 18 13:41:26 UTC 2022'
+let s:last_modified = 'Sun Jun 12 10:59:38 UTC 2022'
 let g:everforest_loaded_file_types = []
 
 if !(exists('g:colors_name') && g:colors_name ==# 'everforest' && s:configuration.better_performance)
@@ -54,7 +54,7 @@ else
   endif
   call everforest#highlight('Folded', s:palette.grey1, s:palette.bg1)
   call everforest#highlight('ToolbarLine', s:palette.fg, s:palette.bg2)
-  if s:configuration.sign_column_background ==# 'default'
+  if s:configuration.sign_column_background ==# 'grey'
     call everforest#highlight('SignColumn', s:palette.fg, s:palette.bg1)
     call everforest#highlight('FoldColumn', s:palette.grey2, s:palette.bg1)
   else
@@ -94,7 +94,7 @@ if s:configuration.ui_contrast ==# 'low'
   call everforest#highlight('LineNr', s:palette.bg5, s:palette.none)
   if &diff
     call everforest#highlight('CursorLineNr', s:palette.grey1, s:palette.none, 'underline')
-  elseif (&relativenumber == 1 && &cursorline == 0) || s:configuration.sign_column_background !=# 'default'
+  elseif (&relativenumber == 1 && &cursorline == 0) || s:configuration.sign_column_background ==# 'none'
     call everforest#highlight('CursorLineNr', s:palette.grey1, s:palette.none)
   else
     call everforest#highlight('CursorLineNr', s:palette.grey1, s:palette.bg1)
@@ -103,7 +103,7 @@ else
   call everforest#highlight('LineNr', s:palette.grey0, s:palette.none)
   if &diff
     call everforest#highlight('CursorLineNr', s:palette.grey2, s:palette.none, 'underline')
-  elseif (&relativenumber == 1 && &cursorline == 0) || s:configuration.sign_column_background !=# 'default'
+  elseif (&relativenumber == 1 && &cursorline == 0) || s:configuration.sign_column_background ==# 'none'
     call everforest#highlight('CursorLineNr', s:palette.grey2, s:palette.none)
   else
     call everforest#highlight('CursorLineNr', s:palette.grey2, s:palette.bg1)
@@ -303,7 +303,7 @@ else
   call everforest#highlight('BlueItalic', s:palette.blue, s:palette.none)
   call everforest#highlight('PurpleItalic', s:palette.purple, s:palette.none)
 endif
-if s:configuration.transparent_background || s:configuration.sign_column_background !=# 'default'
+if s:configuration.transparent_background || s:configuration.sign_column_background ==# 'none'
   call everforest#highlight('RedSign', s:palette.red, s:palette.none)
   call everforest#highlight('OrangeSign', s:palette.orange, s:palette.none)
   call everforest#highlight('YellowSign', s:palette.yellow, s:palette.none)
@@ -446,6 +446,7 @@ highlight! link TSPunctBracket Fg
 highlight! link TSPunctDelimiter Grey
 highlight! link TSPunctSpecial Blue
 highlight! link TSRepeat Red
+highlight! link TSStorageClass Orange
 highlight! link TSString Aqua
 highlight! link TSStringEscape Green
 highlight! link TSStringRegex Green
@@ -725,10 +726,11 @@ highlight! link multiple_cursors_cursor Cursor
 highlight! link multiple_cursors_visual Visual
 " }}}
 " mg979/vim-visual-multi {{{
-let g:VM_Mono_hl = 'Cursor'
+call everforest#highlight('VMCursor', s:palette.blue, s:palette.bg_blue)
+let g:VM_Mono_hl = 'VMCursor'
 let g:VM_Extend_hl = 'Visual'
-let g:VM_Cursor_hl = 'Cursor'
-let g:VM_Insert_hl = 'Cursor'
+let g:VM_Cursor_hl = 'VMCursor'
+let g:VM_Insert_hl = 'VMCursor'
 " }}}
 " dominikduda/vim_current_word {{{
 highlight! link CurrentWordTwins CurrentWord
@@ -1043,6 +1045,24 @@ highlight! link plugUpdate Blue
 highlight! link plugDeleted Grey
 highlight! link plugEdge Yellow
 highlight! link plugSha Green
+" syn_end }}}
+" syn_begin: packer {{{
+" https://github.com/wbthomason/packer.nvim
+highlight! link packerSuccess Aqua
+highlight! link packerFail Red
+highlight! link packerStatusSuccess Fg
+highlight! link packerStatusFail Fg
+highlight! link packerWorking Yellow
+highlight! link packerString Yellow
+highlight! link packerPackageNotLoaded Grey
+highlight! link packerRelDate Grey
+highlight! link packerPackageName Green
+highlight! link packerOutput Orange
+highlight! link packerHash Green
+highlight! link packerTimeTrivial Blue
+highlight! link packerTimeHigh Red
+highlight! link packerTimeMedium Yellow
+highlight! link packerTimeLow Green
 " syn_end }}}
 " syn_begin: coctree {{{
 " https://github.com/neoclide/coc.nvim
@@ -2497,6 +2517,7 @@ highlight! link helpSpecial Blue
 highlight! link helpSectionDelim Grey
 " syn_end }}}
 " }}}
+
 highlight! GitSignsAdd guibg=NONE guifg='#83c092'
 highlight! GitSignsChange guibg=NONE guifg='#35a77c'
 highlight! GitSignsDelete guibg=NONE guifg='#f85552'
