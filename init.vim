@@ -9,7 +9,7 @@ call plug#begin()
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'nvim-treesitter/nvim-treeitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
@@ -66,7 +66,7 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     EMMET CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:user_emmet_leader_key='<C-Z>'
+let g:user_emmet_leader_key='<C-Z>' " follow with ',' ... ex: "<C-Z>,"
 let g:user_emmet_mode='a'
 
 
