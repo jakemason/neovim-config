@@ -9,7 +9,7 @@ call plug#begin()
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treeitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
@@ -29,6 +29,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'p00f/clangd_extensions.nvim'
 Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'onsails/lspkind.nvim'
+" Luasnip and cmp support for it
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
@@ -41,9 +42,12 @@ Plug 'AndrewRadev/tagalong.vim'
 " close html tags automatically
 Plug 'alvan/vim-closetag'
 
+" PHP formatting
+Plug 'stephpy/vim-php-cs-fixer'
+
+" Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
-
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'ahmedkhalf/project.nvim'
@@ -58,13 +62,29 @@ Plug 'jakemason/ouroboros'
 
 call plug#end()
 
-let g:ouroboros_debug=0
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                     EMMET CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:user_emmet_leader_key='<C-Z>'
-let g:user_emmet_mode='a' 
+let g:user_emmet_mode='a'
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                     PHP CONFIG                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua<<EOF
+  local config_directory = vim.fn.stdpath('config')
+  vim.g.php_cs_fixer_config_file = config_directory .. '.php-cs-fixer.dist.php'
+EOF
 
+autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                    LUASNIP CONFIG                   "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua<<EOF
   local config_directory = vim.fn.stdpath('config')
   vim.keymap.set('n', '<leader><leader>s', '<cmd>source ' .. config_directory .. '/after/plugin/luasnip.lua<CR>')
   local luasnip = require('luasnip')
@@ -80,6 +100,7 @@ lua<<EOF
     updateevents = "TextChanged, TextChangedI"
   }
 EOF
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     LSP CONFIG                      "
@@ -230,6 +251,7 @@ lua <<EOF
 
   local servers = {
     "intelephense",
+    "psalm",
 --  	"tsserver",
 --  	"pyright",
     "sumneko_lua",
@@ -455,14 +477,13 @@ EOF
 " Find files using Telescope command-line sugar.
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
 " nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <c-f> <cmd>Telescope git_files<cr>
+nnoremap <c-f>      <cmd>Telescope git_files<cr>
 nnoremap <leader>ff <cmd>Telescope git_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
-" nnoremap <leader>fs <cmd>SearchSession<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -472,7 +493,11 @@ lua << EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
+
+    -- For some reason the TS highlighting conflicts with the everforest theme
     disable = { "scss", "css" },
+
+
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -687,7 +712,7 @@ set guifont=JetBrainsMono\ NF:h15
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
 
-
+" Print out the highlight groups underneath the cursor
 function! SynStack ()
     for i1 in synstack(line("."), col("."))
         let i2 = synIDtrans(i1)
