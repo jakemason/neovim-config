@@ -1,4 +1,4 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -45,6 +45,15 @@ Plug 'alvan/vim-closetag'
 " PHP formatting
 Plug 'stephpy/vim-php-cs-fixer'
 
+" Prettier formatting
+" Requires some global npm installs:
+" npm install -g prettier
+" npm install -g prettier-plugin-twig-melody
+Plug 'jakemason/vim-prettier', {
+  \ 'do': 'yarn install --frozen-lockfile --production',
+ \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html', 'twig'],
+   \ 'branch':'release/0.x'}
+
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
@@ -62,6 +71,14 @@ Plug 'jakemason/ouroboros'
 
 call plug#end()
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                  PRETTIER CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:prettier#autoformat = 1 " format on save
+
+" autosave even on files that don't start with @format
+let g:prettier#autoformat_require_pragma = 0 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     EMMET CONFIG                    "
@@ -335,7 +352,7 @@ lua <<EOF
           -- WordPress' older style makes it incompatible with LSP configs. These stubs fix that.
           -- First, you need to install them somewhere:
           -- composer require php-stubs/wordpress-globals php-stubs/wordpress-stubs php-stubs/woocommerce-stubs php-stubs/acf-pro-stubs wpsyntex/polylang-stubs php-stubs/genesis-stubs php-stubs/wp-cli-stubs
-          -- Then, simple include the path to them:
+          -- Then, include the path to them:
           includePaths = 'E:/DevApps/lsp_stubs/vendor/php-stubs/'
         },
       }
@@ -465,13 +482,12 @@ require("telescope").setup{
 
 -- Session information
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
-require("project_nvim").setup {}
---require("auto-session").setup {
---    auto_session_enable_last_session = true,
---}
+require("project_nvim").setup { 
+  detection_methods = { "pattern" },
+  patterns = { ".git", ".svn" } -- only register versioning roots as projects
+}
 
 require('telescope').load_extension("projects")
--- require("telescope").load_extension("session-lens")
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -707,7 +723,23 @@ highlight! cTodo guibg='#404C54'
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
 
 " Set font
-set guifont=JetBrainsMono\ NF:h15
+let s:fontsize = 15
+function! AdjustFontSize(amount)
+  let s:fontsize = s:fontsize+a:amount
+  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
+  :execute command
+  echom "Font Size Now:" . s:fontsize
+endfunction
+call AdjustFontSize(0) " set the font as desired on load with the default fontsize
+
+noremap <C-ScrollWheelUp> :call AdjustFontSize(1)<CR>
+noremap <C-ScrollWheelDown> :call AdjustFontSize(-1)<CR>
+inoremap <C-ScrollWheelUp> <Esc>:call AdjustFontSize(1)<CR>a
+inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
+
+
+" Hides the command bar while not in use -- praise be to Neovim
+" set cmdheight=0 " Only available in nightly, but it's currently not compatible with Neovide
 
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"

@@ -12,4 +12,5 @@ return $config->setRules([
         'import_constants' => true,
         'import_functions' => false,
     ],
+    'concat_space' => ['spacing' => 'one'],
 ]);
