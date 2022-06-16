@@ -33,8 +33,12 @@ Plug 'onsails/lspkind.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
+" Critical for easily moving between quickfix entries ]q, [q and more, etc 
+Plug 'tpope/vim-unimpaired'
+
 " twig isn't natively supported by tree-sitter yet
-Plug 'lumiliet/vim-twig'
+Plug 'nelsyeung/twig.vim'
+
 " emmet is a must for web work
 Plug 'mattn/emmet-vim'
 " automatically change matching tag in html
@@ -49,10 +53,7 @@ Plug 'stephpy/vim-php-cs-fixer'
 " Requires some global npm installs:
 " npm install -g prettier
 " npm install -g prettier-plugin-twig-melody
-Plug 'jakemason/vim-prettier', {
-  \ 'do': 'yarn install --frozen-lockfile --production',
- \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html', 'twig'],
-   \ 'branch':'release/0.x'}
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
@@ -79,6 +80,20 @@ let g:prettier#autoformat = 1 " format on save
 
 " autosave even on files that don't start with @format
 let g:prettier#autoformat_require_pragma = 0 
+
+command! -nargs=1 Silent
+\   execute 'silent !' . <q-args>
+\ | execute 'redraw!'
+
+" So .twig doesn't do autosaving through vim very well. It can be done,
+" but every time you run it the cursor position is reset. I tried doing
+" some sort of getpos / setpos sequence but something with the fact that
+" the file/buffer reloads breaks that sequence. Thus, I just manually save
+" these via this command.
+"
+" TODO: Maybe it's worth running this on something like BufLeave rather than
+" on write?
+map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     EMMET CONFIG                    "
@@ -660,7 +675,7 @@ nnoremap <C-v> "+p
 " My preferred shortcut to enter insert mode
 nnoremap a i
 
-" Allow hidden buffers
+" Allow hidden buffers - important for terminals you show/hide amongst others
 set hidden
 
 " Rendering
@@ -695,9 +710,12 @@ set listchars=tab:▸\ ,eol:¬
 " Or use your leader key + l to toggle on/off
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
+" quick command for editing init.vim
+map <leader><leader>e :e $MYVIMRC<CR>
+
 " Color scheme (terminal)
 set termguicolors
-"set t_Co=256
+set t_Co=256
 
 set background=dark
 let g:everforest_enable_italic=1
