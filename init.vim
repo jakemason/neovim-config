@@ -48,6 +48,7 @@ Plug 'tpope/vim-abolish'
 Plug 'mattn/emmet-vim'
 " automatically change matching tag in html
 Plug 'AndrewRadev/tagalong.vim'
+
 " close html tags automatically
 Plug 'alvan/vim-closetag'
 
@@ -67,6 +68,7 @@ Plug 'prettier/vim-prettier', {
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
 
+
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'jakemason/project.nvim'
 " Plug 'ahmedkhalf/project.nvim'
@@ -80,8 +82,6 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros'
 
 call plug#end()
-
-
 
 let g:php_namespace_sort_after_insert = 1
 function! IPhpInsertUse()
