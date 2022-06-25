@@ -7,15 +7,17 @@ filetype plugin indent on
 call plug#begin()
 
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
-Plug 'jackguo380/vim-lsp-cxx-highlight'
-Plug 'kyazdani42/nvim-web-devicons'
+Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
+Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
-Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
+" an amazing in-editor git interface - seriously, first time that I've ever preferred
+" something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
 
 " LSP support, autocompletion via nvim-cmp
@@ -33,11 +35,14 @@ Plug 'onsails/lspkind.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
+" Allows quick importing of "use" statements in PHP
+Plug 'arnaud-lb/vim-php-namespace'
+
 " Critical for easily moving between quickfix entries ]q, [q and more, etc 
 Plug 'tpope/vim-unimpaired'
 
-" twig isn't natively supported by tree-sitter yet
-Plug 'nelsyeung/twig.vim'
+" Allows respecting case during search / replace
+Plug 'tpope/vim-abolish'
 
 " emmet is a must for web work
 Plug 'mattn/emmet-vim'
@@ -53,14 +58,18 @@ Plug 'stephpy/vim-php-cs-fixer'
 " Requires some global npm installs:
 " npm install -g prettier
 " npm install -g prettier-plugin-twig-melody
-Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install --frozen-lockfile --production',
+  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
 
 " Telescope, searching projects, fzf for speed, and session management
-Plug 'ahmedkhalf/project.nvim'
+Plug 'jakemason/project.nvim'
+" Plug 'ahmedkhalf/project.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 " Plug 'rmagatti/auto-session'
@@ -71,6 +80,16 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros'
 
 call plug#end()
+
+
+
+let g:php_namespace_sort_after_insert = 1
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -95,6 +114,7 @@ command! -nargs=1 Silent
 " on write?
 map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     EMMET CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -116,23 +136,7 @@ autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    LUASNIP CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua<<EOF
-  local config_directory = vim.fn.stdpath('config')
-  vim.keymap.set('n', '<leader><leader>s', '<cmd>source ' .. config_directory .. '/after/plugin/luasnip.lua<CR>')
-  local luasnip = require('luasnip')
-
-  vim.keymap.set({"i", "s" }, "<c-k>", function()
-      if luasnip.expand_or_jumpable() then
-          luasnip.expand_or_jump()
-      end
-  end, {silent = true })
-
-  luasnip.config.set_config {
-    history = true,
-    updateevents = "TextChanged, TextChangedI"
-  }
-EOF
-
+" See after/plugin/luasnip
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     LSP CONFIG                      "
@@ -417,6 +421,7 @@ if exists("g:neovide")
   let g:neovide_refresh_rate=140
 endif
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   SHELL CONFIG                      "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -495,11 +500,25 @@ require("telescope").setup{
     }
 }
 
+local function loadSession()
+ if(vim.fn.filereadable('Session.vim') ~= 0) then
+   -- start a new scratch file just to stop nvim from throwing a floating
+   -- window error if we attempt to source without having a non-floating 
+   -- buffer open
+   vim.cmd('new | setlocal bt=nofile bh=wipe nobl noswapfile nu')
+   
+   -- source our Session.vim file and ignore the error about closing the
+   -- scratch file above so abruptly
+   vim.cmd('silent! source Session.vim')
+  end
+end
+
 -- Session information
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 require("project_nvim").setup { 
   detection_methods = { "pattern" },
-  patterns = { ".git", ".svn" } -- only register versioning roots as projects
+  patterns = { ".git", ".svn" },  -- only register versioning roots as projects
+  custom_callback = loadSession
 }
 
 require('telescope').load_extension("projects")
@@ -656,7 +675,7 @@ set noshiftround
 
 "Column width
 set textwidth=100
-set colorcolumn=100 " visualize the column
+" set colorcolumn=100 " visualize the column
 
 " Cursor motion
 set scrolloff=3
@@ -741,20 +760,22 @@ highlight! cTodo guibg='#404C54'
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
 
 " Set font
-let s:fontsize = 15
+let s:fontsize = 13
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
   let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
   :execute command
   echom "Font Size Now:" . s:fontsize
 endfunction
-call AdjustFontSize(0) " set the font as desired on load with the default fontsize
+silent! call AdjustFontSize(0) " set the font as desired on load with the default fontsize
 
 noremap <C-ScrollWheelUp> :call AdjustFontSize(1)<CR>
 noremap <C-ScrollWheelDown> :call AdjustFontSize(-1)<CR>
 inoremap <C-ScrollWheelUp> <Esc>:call AdjustFontSize(1)<CR>a
 inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 
+" Visual Mode <C-r> does a search and replace of everything under the cursor
+vnoremap <C-r> "hy:%s/<C-r>h//g<left><left><left>
 
 " Hides the command bar while not in use -- praise be to Neovim
 " set cmdheight=0 " Only available in nightly, but it's currently not compatible with Neovide
@@ -772,6 +793,7 @@ function! SynStack ()
     endfor
 endfunction
 map <leader>hg :call SynStack()<CR>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    C/C++ CONFIG                     "
