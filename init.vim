@@ -44,6 +44,8 @@ Plug 'tpope/vim-unimpaired'
 " Allows respecting case during search / replace
 Plug 'tpope/vim-abolish'
 
+Plug 'tikhomirov/vim-glsl'
+
 " emmet is a must for web work
 Plug 'mattn/emmet-vim'
 " automatically change matching tag in html
