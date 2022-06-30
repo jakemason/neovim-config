@@ -22,45 +22,98 @@ end, {silent = true })
 
 --
 --
---           SNIPPETS
+--           GRAMMAR
 --
 --
 local snippet = ls.s
 local t = ls.text_node
 local i = ls.insert_node
 local fmt = require("luasnip.extras.fmt").fmt
+-- only difference is it uses "< >" as delimiters instead of "{ }"
+-- this is very useful in any language where "{ }" are common symbols, such as within .twig
+local fmta = require("luasnip.extras.fmt").fmta
 local rep = require("luasnip.extras").rep
+local postfix = require("luasnip.extras.postfix").postfix
+local lambda = require("luasnip.extras").l
+local f = ls.function_node
+
+--
+--
+--           FUNCTIONS
+--
+--
+
+-- Not meant to be comprehensible, just usable
+local function camelToSnake(s)
+  return s:gsub('%f[^%l]%u','_%1'):gsub('%f[^%a]%d','_%1'):gsub('%f[^%d]%a','_%1'):gsub('(%u)(%u%l)','%1_%2'):lower()
+end
+
+local uc = function(insert_node_id)
+  return f(function(args) return string.upper(camelToSnake(args[1][1])) end, insert_node_id)
+end
+
+--
+--
+--           SNIPPETS
+--
+--
+local js_snips = {
+  postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ")")}),
+  postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ")")}),
+}
+
 
 local c_cpp_snips = {
+  snippet("cl", fmta([[ 
+    #ifndef <>_HPP
+    #define <>_HPP
+
+    class <>
+    {
+        <>
+    };
+
+    #endif
+    ]]
+    , { uc(1), uc(1), i(1), i(0) })
+
+    ),
 }
 
 local twig_snips = {
-  -- To escape "{" we need to double it up. This gets ugly with twig...
-  snippet("dd", fmt ("{{{{ dd({}) }}}}{}", { i(1), i(0) })),
+  snippet("dd", fmta ("{{ dd(<>) }}<>", { i(1), i(0) })),
 
   snippet("plc", fmt(
   "<img src=\"https://unsplash.it/{}/{}\"/>\n{}", {i(1), i(2), i(0)}
   )),
 
-  snippet("for", fmt(
-    "{{% for {} in context.{}s %}}\n\t{}\n{{% endfor %}}", {i(1), rep(1), i(0)}
+  snippet("for", fmta(
+    "{% for <> in context.<>s %}\n\t<>\n{% endfor %}", {i(1), rep(1), i(0)}
   )),
 
-  snippet("if", fmt(
-    "{{% if {} %}}\n\t{}\n{{% endif %}}", {i(1), i(0)}
+  snippet("if", fmta(
+    "{% if <> %}\n\t<>\n{% endif %}", {i(1), i(0)}
   )),
 
-  snippet("__", fmt(
-  "{{{{ __('{}', '{}') }}}}\n{}", {i(1), i(2), i(0)}
+  snippet("__", fmta(
+  "{{ __('<>', '<>') }}\n<>", {i(1), i(2), i(0)}
   )),
 
-  snippet("include", fmt(
-    "{{% include \"{}.twig\" with {} {{}} %}}{}", {i(1), i(2), i(0)}
+  snippet("{", fmta(
+  "{{ <> }}\n<>", {i(1), i(0)}
+  )),
+
+  snippet("include", fmta(
+    "{% include \"<>.twig\" with <> {} %}<>", {i(1), i(2), i(0)}
   ))
 }
 
 local php_snips = {
-  snippet("dd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>'", {i(0)}))
+  snippet("dd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';", {i(0)})),
+
+  snippet("ddd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';die();", {i(0)})),
+
+  snippet("dds", fmt("echo '<pre style=\"display: none !important;\">';\nvar_dump({});\necho '</pre>';", {i(0)}))
 }
 
 ls.add_snippets("html", twig_snips)
@@ -68,3 +121,4 @@ ls.add_snippets("twig", twig_snips)
 ls.add_snippets("c", c_cpp_snips)
 ls.add_snippets("cpp", c_cpp_snips)
 ls.add_snippets("php", php_snips)
+ls.add_snippets("js", js_snips)

@@ -16,6 +16,7 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'vimwiki/vimwiki'
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
+
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
@@ -34,6 +35,9 @@ Plug 'onsails/lspkind.nvim'
 " Luasnip and cmp support for it
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+
+" Easily comment out blocks of code at a time
+Plug 'preservim/nerdcommenter'
 
 " Allows quick importing of "use" statements in PHP
 Plug 'arnaud-lb/vim-php-namespace'
@@ -81,7 +85,7 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-Plug 'jakemason/ouroboros'
+Plug 'jakemason/ouroboros.nvim'
 
 call plug#end()
 
@@ -290,8 +294,8 @@ lua <<EOF
   local servers = {
     "intelephense",
     "psalm",
---  	"tsserver",
---  	"pyright",
+  	"tsserver",
+  	"pyright",
     "sumneko_lua",
   	"eslint",
   	"bashls",
@@ -299,7 +303,7 @@ lua <<EOF
   	"jsonls",
   	"cssls",
   	"html",
---  	"graphql",
+  	"graphql",
 --  	"tailwindcss",
 --    "vimls"
   }
@@ -512,6 +516,7 @@ local function loadSession()
    -- source our Session.vim file and ignore the error about closing the
    -- scratch file above so abruptly
    vim.cmd('silent! source Session.vim')
+   vim.cmd('silent! <Esc>')
   end
 end
 
@@ -693,9 +698,6 @@ nnoremap k gk
 vnoremap <C-c> "+y
 nnoremap <C-v> "+p
 
-" My preferred shortcut to enter insert mode
-nnoremap a i
-
 " Allow hidden buffers - important for terminals you show/hide amongst others
 set hidden
 
@@ -777,7 +779,7 @@ inoremap <C-ScrollWheelUp> <Esc>:call AdjustFontSize(1)<CR>a
 inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 
 " Visual Mode <C-r> does a search and replace of everything under the cursor
-vnoremap <C-r> "hy:%s/<C-r>h//g<left><left><left>
+vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
 
 " Hides the command bar while not in use -- praise be to Neovim
 " set cmdheight=0 " Only available in nightly, but it's currently not compatible with Neovide
