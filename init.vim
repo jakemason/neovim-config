@@ -516,7 +516,9 @@ local function loadSession()
    -- source our Session.vim file and ignore the error about closing the
    -- scratch file above so abruptly
    vim.cmd('silent! source Session.vim')
-   vim.cmd('silent! <Esc>')
+
+   -- escapes from Insert mode which the source above will leave us in by default
+   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>',true,false,true),'m',true)
   end
 end
 
