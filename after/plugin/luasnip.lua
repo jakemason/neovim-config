@@ -58,8 +58,8 @@ end
 --
 --
 local js_snips = {
-  postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ")")}),
-  postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ")")}),
+  postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ");")}),
+  postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ");")}),
 }
 
 
@@ -121,4 +121,4 @@ ls.add_snippets("twig", twig_snips)
 ls.add_snippets("c", c_cpp_snips)
 ls.add_snippets("cpp", c_cpp_snips)
 ls.add_snippets("php", php_snips)
-ls.add_snippets("js", js_snips)
+ls.add_snippets("javascript", js_snips)
