@@ -100,7 +100,11 @@ local twig_snips = {
   )),
 
   snippet("{", fmta(
-  "{{ <> }}\n<>", {i(1), i(0)}
+  "{{ <> }}<>", {i(1), i(0)}
+  )),
+
+  snippet("{c", fmta(
+  "{{ context.<> }}<>", {i(1), i(0)}
   )),
 
   snippet("include", fmta(

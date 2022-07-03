@@ -36,6 +36,8 @@ Plug 'onsails/lspkind.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
+Plug 'rebelot/kanagawa.nvim'
+
 " Easily comment out blocks of code at a time
 Plug 'preservim/nerdcommenter'
 
@@ -73,7 +75,6 @@ Plug 'prettier/vim-prettier', {
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
-
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'jakemason/project.nvim'
@@ -549,6 +550,7 @@ nnoremap <leader>fp <cmd>Telescope projects<cr>
 "                  TREESITTER CONFIG                  "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
+
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
@@ -564,6 +566,7 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = true,
   },
 }
+
 EOF
 
 
@@ -744,7 +747,9 @@ set t_Co=256
 
 set background=dark
 let g:everforest_enable_italic=1
-colorscheme everforest
+" colorscheme everforest
+colorscheme kanagawa
+
 
 " Custom word highlighting
 augroup vimrc_todo
@@ -754,6 +759,9 @@ augroup END
 highlight! MyTodo guibg='#404C54'
 highlight! cTodo guibg='#404C54'
 " hi def link MyTodo Todo
+
+" Calling WipeReg removes clears and removes all saved registers
+command! WipeReg for i in range(33,126) | silent! call setreg(nr2char(i), []) | endfor
 
 " Custom command to load our error log file and open cw
 :command Err cgetfile err.log | cw
@@ -787,7 +795,7 @@ vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
 " set cmdheight=0 " Only available in nightly, but it's currently not compatible with Neovide
 
 " Automatically reload config files when updated
-autocmd! BufWritePost $MYVIMRC source $MYVIMRC | echom "Reloaded $MYVIMRC"
+autocmd! BufWritePost $MYVIMRC nested source $MYVIMRC | echom "Reloaded $MYVIMRC"
 
 " Print out the highlight groups underneath the cursor
 function! SynStack ()
