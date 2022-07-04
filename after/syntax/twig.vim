@@ -11,7 +11,10 @@ syn region twigLogicRegion start='{%' end='%}' fold transparent contains=twigLog
 syn region outPutRegion start='{{' end='}}'
 
 " Keywords
-syn keyword twigLogic contained for if not endif endfor in include with
+syn keyword twigLogic containedin=twigLogicRegion for if not endif endfor in include with set and or
+
+" Matches
+syn match twigKey "^\s*[A-Za-z].*:" containedin=twigLogicRegion
 
 let b:twigjm = "twigjm"
 
@@ -19,3 +22,4 @@ hi! def link twigLogic Yellow
 hi! def link outPutRegion Constant
 hi! def link twigLogicRegion Constant
 hi! twigLogic guibg=transparent guifg='#FF5D62'
+hi! twigKey guibg=transparent guifg='#7AA89F'
