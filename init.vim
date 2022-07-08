@@ -781,7 +781,7 @@ let g:terminal_color_6  = '#7aa89f' " Normal
 let g:terminal_color_14 = '#7e9cd8' " Bright
 " White
 let g:terminal_color_7  = '#c0c0c0' " Normal
-let g:terminal_color_15 = '#ffffff' " Bright
+let g:terminal_color_15 = '#f2f2f2' " Bright
 
 
 " Custom word highlighting
