@@ -53,7 +53,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tikhomirov/vim-glsl'
 
 " emmet is a must for web work
-Plug 'mattn/emmet-vim'
+" Plug 'mattn/emmet-vim'
 " automatically change matching tag in html
 Plug 'AndrewRadev/tagalong.vim'
 
@@ -300,6 +300,7 @@ lua <<EOF
     "sumneko_lua",
   	"eslint",
   	"bashls",
+    "emmet_ls",
 --  	"yamlls",
   	"jsonls",
   	"cssls",
@@ -310,6 +311,9 @@ lua <<EOF
   }
 
   local server_configs = {
+    emmet_ls = {
+      filetypes = { 'twig', 'html.twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
+    },
     intelephense = {
       intelephense = {
         stubs = { 
@@ -408,6 +412,13 @@ lua <<EOF
         autostart = true,
     },
   }
+
+  lspconfig.emmet_ls.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { 'twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
+  })
+
 
   local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
   for type, icon in pairs(signs) do
@@ -619,7 +630,6 @@ EOF
 " setup mapping to call :LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -721,15 +731,11 @@ set incsearch
 set ignorecase
 set smartcase
 set showmatch
-map <leader><space> :let @/=''<cr> " clear search
-" Clear last search highlighting when hitting space
+" Clear last search highlighting when hitting space 
 map <space> :noh<cr>
 
 " Quickly source Session.vim in cwd
 map <leader>s :source Session.vim<CR>
-
-" Formatting
-map <leader>q gqip
 
 " Visualize tabs and newlines
 set listchars=tab:▸\ ,eol:¬
@@ -746,18 +752,48 @@ set termguicolors
 set t_Co=256
 
 set background=dark
-let g:everforest_enable_italic=1
-" colorscheme everforest
 colorscheme kanagawa
+
+" Set Terminal Colors
+" These terminal colors are important with anything that
+" uses the terminal colors by default such as LazyGit
+" Black
+let g:terminal_color_0  = '#000000' " Normal
+let g:terminal_color_8  = '#808080' " Bright
+" Red
+let g:terminal_color_1  = '#c34043'
+let g:terminal_color_9  = '#e82424'
+" Green
+let g:terminal_color_2  = '#98bb6c'
+let g:terminal_color_10 = '#98bb6c'
+" Yellow
+let g:terminal_color_3  = '#dca561'
+let g:terminal_color_11 = '#e6c384'
+" Blue
+let g:terminal_color_4  = '#658593'
+let g:terminal_color_12 = '#7fb4ca'
+" Purple
+let g:terminal_color_5  = '#938aa9'
+let g:terminal_color_13 = '#957fb8'
+" Cyan
+let g:terminal_color_6  = '#7aa89f'
+let g:terminal_color_14 = '#7e9cd8'
+" White
+let g:terminal_color_7  = '#c0c0c0'
+let g:terminal_color_15 = '#ffffff'
 
 
 " Custom word highlighting
 augroup vimrc_todo
     au!
-    au Syntax * syn match MyTodo /\v<(FIXME|STUDY|NOTE|UPDATE|TODO|OPTIMIZE|PERFORMANCE|BUG|HARDCODED|KILL|IMPORTANT|REZ)/ containedin=.*Comment.*
+    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|PERF|UPDATE|KILL|IMPORTANT|REZ|BUG)/
+          \ containedin=.*Comment,vimCommentTitle
 augroup END
-highlight! MyTodo guibg='#404C54'
-highlight! cTodo guibg='#404C54'
+hi def link MyTodo Todo
+
+
+" TODO FIXME OPTIMIZE STUDY NOTE
+" highlight! cTodo guibg='#404C54'
 " hi def link MyTodo Todo
 
 " Calling WipeReg removes clears and removes all saved registers
@@ -792,7 +828,7 @@ inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
 
 " Hides the command bar while not in use -- praise be to Neovim
-" set cmdheight=0 " Only available in nightly, but it's currently not compatible with Neovide
+set cmdheight=0
 
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC nested source $MYVIMRC | echom "Reloaded $MYVIMRC"
