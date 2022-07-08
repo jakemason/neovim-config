@@ -757,37 +757,37 @@ colorscheme kanagawa
 " Set Terminal Colors
 " These terminal colors are important with anything that
 " uses the terminal colors by default such as LazyGit
+
 " Black
 let g:terminal_color_0  = '#000000' " Normal
 let g:terminal_color_8  = '#808080' " Bright
 " Red
-let g:terminal_color_1  = '#c34043'
-let g:terminal_color_9  = '#e82424'
+let g:terminal_color_1  = '#c34043' " Normal
+let g:terminal_color_9  = '#e82424' " Bright
 " Green
-let g:terminal_color_2  = '#98bb6c'
-let g:terminal_color_10 = '#98bb6c'
+let g:terminal_color_2  = '#98bb6c' " Normal
+let g:terminal_color_10 = '#98bb6c' " Bright
 " Yellow
-let g:terminal_color_3  = '#dca561'
-let g:terminal_color_11 = '#e6c384'
+let g:terminal_color_3  = '#dca561' " Normal
+let g:terminal_color_11 = '#e6c384' " Bright
 " Blue
-let g:terminal_color_4  = '#658593'
-let g:terminal_color_12 = '#7fb4ca'
+let g:terminal_color_4  = '#658593' " Normal
+let g:terminal_color_12 = '#7fb4ca' " Bright
 " Purple
-let g:terminal_color_5  = '#938aa9'
-let g:terminal_color_13 = '#957fb8'
+let g:terminal_color_5  = '#938aa9' " Normal
+let g:terminal_color_13 = '#957fb8' " Bright
 " Cyan
-let g:terminal_color_6  = '#7aa89f'
-let g:terminal_color_14 = '#7e9cd8'
+let g:terminal_color_6  = '#7aa89f' " Normal
+let g:terminal_color_14 = '#7e9cd8' " Bright
 " White
-let g:terminal_color_7  = '#c0c0c0'
-let g:terminal_color_15 = '#ffffff'
+let g:terminal_color_7  = '#c0c0c0' " Normal
+let g:terminal_color_15 = '#ffffff' " Bright
 
 
 " Custom word highlighting
 augroup vimrc_todo
     au!
-    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|PERF|UPDATE|KILL|IMPORTANT|REZ|BUG)/
-          \ containedin=.*Comment,vimCommentTitle
+    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|PERF|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle
 augroup END
 hi def link MyTodo Todo
 
@@ -828,7 +828,7 @@ inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
 
 " Hides the command bar while not in use -- praise be to Neovim
-set cmdheight=0
+"set cmdheight=0 " bleh, currently can't see macro recording state with this at 0 :(
 
 " Automatically reload config files when updated
 autocmd! BufWritePost $MYVIMRC nested source $MYVIMRC | echom "Reloaded $MYVIMRC"
