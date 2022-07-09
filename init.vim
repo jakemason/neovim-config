@@ -52,8 +52,6 @@ Plug 'tpope/vim-abolish'
 
 Plug 'tikhomirov/vim-glsl'
 
-" emmet is a must for web work
-" Plug 'mattn/emmet-vim'
 " automatically change matching tag in html
 Plug 'AndrewRadev/tagalong.vim'
 
