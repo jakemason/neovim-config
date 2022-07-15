@@ -119,14 +119,6 @@ command! -nargs=1 Silent
 " on write?
 map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                     EMMET CONFIG                    "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:user_emmet_leader_key='<C-Z>' " follow with ',' ... ex: "<C-Z>,"
-let g:user_emmet_mode='a'
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     PHP CONFIG                      "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -242,9 +234,10 @@ lua <<EOF
     }),
 
     sources = cmp.config.sources({
+      -- This order matters! Higher-up sources appear higher in the completion suggestions
+      { name = 'luasnip' },
       { name = 'nvim_lsp' },
       { name = 'nvim_lsp_signature_help' },
-      { name = 'luasnip' },
     }, 
     {
       { name = 'buffer' },
@@ -733,7 +726,7 @@ set showmatch
 map <space> :noh<cr>
 
 " Quickly source Session.vim in cwd
-map <leader>s :source Session.vim<CR>
+" map <leader>s :source Session.vim<CR>
 
 " Visualize tabs and newlines
 set listchars=tab:▸\ ,eol:¬

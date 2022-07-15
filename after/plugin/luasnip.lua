@@ -19,7 +19,17 @@ vim.keymap.set({"i", "s" }, "<c-k>", function()
     end
 end, {silent = true })
 
+vim.keymap.set({"i", "s" }, "<c-enter>", function()
+    if ls.expand_or_jumpable() then
+        ls.expand_or_jump()
+    end
+end, {silent = true })
 
+vim.keymap.set({"i", "s" }, "<s-enter>", function()
+    if ls.expand_or_jumpable() then
+        ls.expand_or_jump()
+    end
+end, {silent = true })
 --
 --
 --           GRAMMAR
@@ -143,20 +153,23 @@ local php_snips = {
       'type'         => 'repeater',
       'name'         => '{}',
       'instructions' => __('{}', TEXT_DOMAIN),
+      'button_label' => __('{}', TEXT_DOMAIN),
       'wrapper'      => ['width' => 100 ],
       'sub_fields' => [
         {}
       ],
   ],
   ]]
-  , {i(1), i(2), rep(1), i(3), i(0)}))
+  , {i(1), i(2), rep(1), i(3), i(4), i(0)}))
 }
 
-ls.add_snippets("css", css_snips)
-ls.add_snippets("scss", css_snips)
-ls.add_snippets("html", twig_snips)
-ls.add_snippets("twig", twig_snips)
-ls.add_snippets("c", c_cpp_snips)
-ls.add_snippets("cpp", c_cpp_snips)
-ls.add_snippets("php", php_snips)
-ls.add_snippets("javascript", js_snips)
+local opts = {}
+opts['override_priority'] = 1001; -- default is 1000 and we always want our custom ones first
+ls.add_snippets("css", css_snips, opts)
+ls.add_snippets("scss", css_snips, opts)
+ls.add_snippets("html", twig_snips, opts)
+ls.add_snippets("twig", twig_snips, opts)
+ls.add_snippets("c", c_cpp_snips, opts)
+ls.add_snippets("cpp", c_cpp_snips, opts)
+ls.add_snippets("php", php_snips, opts)
+ls.add_snippets("javascript", js_snips, opts)
