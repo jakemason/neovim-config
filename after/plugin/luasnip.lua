@@ -62,6 +62,10 @@ local js_snips = {
   postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ");")}),
 }
 
+local css_snips = {
+  snippet("!", fmt("!important;{}", { i(0) })),
+}
+
 
 local c_cpp_snips = {
   snippet("cl", fmta([[ 
@@ -117,9 +121,39 @@ local php_snips = {
 
   snippet("ddd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';die();", {i(0)})),
 
-  snippet("dds", fmt("echo '<pre style=\"display: none !important;\">';\nvar_dump({});\necho '</pre>';", {i(0)}))
+  snippet("dds", fmt("echo '<pre style=\"display: none !important;\">';\nvar_dump({});\necho '</pre>';", {i(0)})),
+  snippet("field", fmt(
+  [[
+  [
+      'key'          => self::KEY . '_{}',
+      'label'        => __('{}', TEXT_DOMAIN),
+      'type'         => '{}',
+      'name'         => '{}',
+      'instructions' => __('{}', TEXT_DOMAIN),
+      'wrapper'      => ['width' => 100 ],
+  ], {}
+  ]]
+  , {i(1), i(2), i(3), rep(1), i(4), i(0)})),
+
+  snippet("rep", fmt(
+  [[
+  [
+      'key'          => self::KEY . '_{}',
+      'label'        => __('{}', TEXT_DOMAIN),
+      'type'         => 'repeater',
+      'name'         => '{}',
+      'instructions' => __('{}', TEXT_DOMAIN),
+      'wrapper'      => ['width' => 100 ],
+      'sub_fields' => [
+        {}
+      ],
+  ],
+  ]]
+  , {i(1), i(2), rep(1), i(3), i(0)}))
 }
 
+ls.add_snippets("css", css_snips)
+ls.add_snippets("scss", css_snips)
 ls.add_snippets("html", twig_snips)
 ls.add_snippets("twig", twig_snips)
 ls.add_snippets("c", c_cpp_snips)
