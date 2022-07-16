@@ -793,6 +793,16 @@ command! WipeReg for i in range(33,126) | silent! call setreg(nr2char(i), []) | 
 " Custom command to load our error log file and open cw
 :command Err cgetfile err.log | cw
 
+" Allows quickly cloning a file to the same directory under a specific name
+function DuplicateFileToSameDirectory( ... )
+  if a:0 != 1
+    echo "Filename needed"
+    return
+  endif
+execute 'saveas ' . expand('%:h') . '\' . a:1 . '.' . expand('%:e')
+endfunction
+:command! -nargs=1 Dup :call DuplicateFileToSameDirectory(<f-args>)
+
 " Position the (global) quickfix window at the very bottom of the window
 " (useful for making sure that it appears underneath splits)
 "
