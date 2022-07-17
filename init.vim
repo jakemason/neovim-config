@@ -845,6 +845,24 @@ function! SynStack ()
 endfunction
 map <leader>hg :call SynStack()<CR>
 
+lua<<EOF
+
+-- This changes the "delete line" shortcut "dd" so that it will not copy
+-- deleted blank lines into your paste register, instead if the line is empty
+-- it gets thrown into the black hole register.
+--
+-- This is very helpful because you often yank a line and want to eat the blank
+-- as well, but still want to be able to paste the original line elsewhere
+function smart_dd()
+  if vim.api.nvim_get_current_line():match("^%s*$") then
+    return "\"_dd"
+  else
+    return "dd"
+  end
+end
+
+vim.keymap.set( "n", "dd", smart_dd, { noremap = true, expr = true } );
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    C/C++ CONFIG                     "
