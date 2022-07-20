@@ -140,10 +140,10 @@ local php_snips = {
       'type'         => '{}',
       'name'         => '{}',
       'instructions' => __('{}', TEXT_DOMAIN),
-      'wrapper'      => ['width' => 100 ],
+      'wrapper'      => ['width' => {} ],
   ], {}
   ]]
-  , {i(1), i(2), i(3), rep(1), i(4), i(0)})),
+  , {i(1), i(2), i(3), rep(1), i(4), i(5), i(0)})),
 
   snippet("rep", fmt(
   [[
@@ -154,13 +154,13 @@ local php_snips = {
       'name'         => '{}',
       'instructions' => __('{}', TEXT_DOMAIN),
       'button_label' => __('{}', TEXT_DOMAIN),
-      'wrapper'      => ['width' => 100 ],
+      'wrapper'      => ['width' => {} ],
       'sub_fields' => [
         {}
       ],
   ],
   ]]
-  , {i(1), i(2), rep(1), i(3), i(4), i(0)}))
+  , {i(1), i(2), rep(1), i(3), i(4), i(5), i(0)}))
 }
 
 local opts = {}

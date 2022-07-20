@@ -88,14 +88,6 @@ Plug 'jakemason/ouroboros.nvim'
 
 call plug#end()
 
-let g:php_namespace_sort_after_insert = 1
-function! IPhpInsertUse()
-    call PhpInsertUse()
-    call feedkeys('a',  'n')
-endfunction
-autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
-autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  PRETTIER CONFIG                    "
@@ -119,6 +111,7 @@ command! -nargs=1 Silent
 " on write?
 map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     PHP CONFIG                      "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -128,6 +121,14 @@ lua<<EOF
 EOF
 
 autocmd BufWritePost *.php silent! call PhpCsFixerFixFile()
+
+let g:php_namespace_sort_after_insert = 1
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -424,7 +425,7 @@ EOF
 "                   NEOVIDE CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 if exists("g:neovide") 
-  let g:neovide_cursor_animation_length=0.0
+  let g:neovide_cursor_animation_length=0.015
   let g:neovide_cursor_trail_length=0.10
   let g:neovide_remember_window_size=1
   let g:neovide_refresh_rate=140
@@ -499,7 +500,7 @@ require("telescope").setup{
             "%.dll",
             "%.png",
             "%.gif",
-            "%.a",
+            "%.a$",
             "%.lib",
             "%.la"
         }
