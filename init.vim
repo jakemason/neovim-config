@@ -779,10 +779,11 @@ let g:terminal_color_15 = '#f2f2f2' " Bright
 " Custom word highlighting
 augroup vimrc_todo
     au!
-    au Syntax * syn match MyTodo /\v<(FIXME|NOTE|TODO|OPTIMIZE|PERF|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle
+    au Syntax * syn match MyTodo /\v<(FIXME|HACK|NOTE|TODO|OPTIMIZE|PERF|STUDY|PERFORMANCE|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle,cBlock,cCommentL,Comment
 augroup END
-hi def link MyTodo Todo
-
+highlight! MyTodo guibg='#e6c384'
+highlight! vimTodo guibg='#e6c384'
+highlight! cTodo guibg='#e6c384'
 
 " TODO FIXME OPTIMIZE STUDY NOTE
 " highlight! cTodo guibg='#404C54'
