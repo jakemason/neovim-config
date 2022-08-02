@@ -13,7 +13,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'vimwiki/vimwiki'
+Plug 'vimwiki/vimwiki', {'branch': 'dev' } " the master branch hasn't been updated since 2020...
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
 
@@ -36,6 +36,7 @@ Plug 'onsails/lspkind.nvim'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
+" Colorscheme
 Plug 'rebelot/kanagawa.nvim'
 
 " Easily comment out blocks of code at a time
@@ -781,13 +782,12 @@ augroup vimrc_todo
     au!
     au Syntax * syn match MyTodo /\v<(FIXME|HACK|NOTE|TODO|OPTIMIZE|PERF|STUDY|PERFORMANCE|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle,cBlock,cCommentL,Comment
 augroup END
+" Testing: 
+" TODO FIXME OPTIMIZE STUDY NOTE
 highlight! MyTodo guibg='#e6c384'
 highlight! vimTodo guibg='#e6c384'
 highlight! cTodo guibg='#e6c384'
 
-" TODO FIXME OPTIMIZE STUDY NOTE
-" highlight! cTodo guibg='#404C54'
-" hi def link MyTodo Todo
 
 " Calling WipeReg removes clears and removes all saved registers
 command! WipeReg for i in range(33,126) | silent! call setreg(nr2char(i), []) | endfor
