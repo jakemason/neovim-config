@@ -21,6 +21,8 @@ Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
 
+Plug 'akinsho/toggleterm.nvim', {'tag' : 'v2.*'}
+
 " LSP support, autocompletion via nvim-cmp
 Plug 'williamboman/nvim-lsp-installer'
 Plug 'neovim/nvim-lspconfig'
@@ -35,6 +37,8 @@ Plug 'onsails/lspkind.nvim'
 " Luasnip and cmp support for it
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+
+Plug 'windwp/nvim-autopairs'
 
 " Colorscheme
 Plug 'rebelot/kanagawa.nvim'
@@ -89,6 +93,9 @@ Plug 'jakemason/ouroboros.nvim'
 
 call plug#end()
 
+lua<<EOF
+require("toggleterm").setup{}
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  PRETTIER CONFIG                    "
@@ -623,6 +630,15 @@ EOF
 " setup mapping to call :LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                 AUTOPAIRS CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua << EOF
+require("nvim-autopairs").setup {}
+EOF
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -874,20 +890,9 @@ EOF
 noremap <C-e> :Ouroboros<CR>
 
 " clang setup
-let g:clang_format#code_style = 'llvm'
-let g:clang_format#style_options = {
-            \ "AccessModifierOffset" : -4,
-            \ "AllowShortIfStatementsOnASingleLine" : "true",
-            \ "AlwaysBreakTemplateDeclarations" : "true",
-            \ "Standard" : "c++14",
-            \ "BreakBeforeBraces" : "Allman",
-            \ "AlignConsecutiveAssignments" : "true",
-            \ "AlignTrailingComments" : "true",
-            \ "IndentCaseLabels" : "true",
-            \ "PointerAlignment" : "true",
-            \ "BinPackArguments" : "false",
-            \ "ColumnLimit" : 100,
-            \ "NamespaceIndentation" : "All"}
+
+" look for a .clang-format file in the project root and use that 
+let g:clang_format#detect_style_file = 1
 
 autocmd FileType c ClangFormatAutoEnable
 autocmd FileType cpp ClangFormatAutoEnable
