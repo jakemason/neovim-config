@@ -58,8 +58,19 @@ local function camelToSnake(s)
   return s:gsub('%f[^%l]%u','_%1'):gsub('%f[^%a]%d','_%1'):gsub('%f[^%d]%a','_%1'):gsub('(%u)(%u%l)','%1_%2'):lower()
 end
 
+-- convert "this_is_an_example" to "This Is An Example"
+local function snakeToPlainUppercased(s)
+  return s:gsub('_', ' '):gsub('(%l)(%w*)', function(a,b) return string.upper(a)..b end)
+end
+
 local uc = function(insert_node_id)
   return f(function(args) return string.upper(camelToSnake(args[1][1])) end, insert_node_id)
+end
+
+local snakeTitleNode = function(insert_node_id)
+  return f(function(args)
+    return snakeToPlainUppercased(args[1][1]) end,
+  insert_node_id)
 end
 
 --
@@ -132,6 +143,7 @@ local php_snips = {
   snippet("ddd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';die();", {i(0)})),
 
   snippet("dds", fmt("echo '<pre style=\"display: none !important;\">';\nvar_dump({});\necho '</pre>';", {i(0)})),
+
   snippet("field", fmt(
   [[
   [
@@ -143,7 +155,7 @@ local php_snips = {
       'wrapper'      => ['width' => {} ],
   ], {}
   ]]
-  , {i(1), i(2), i(3), rep(1), i(4), i(5), i(0)})),
+  , {i(1), snakeTitleNode(1), i(2), rep(1), i(3), i(4), i(0)})),
 
   snippet("rep", fmt(
   [[
@@ -160,7 +172,7 @@ local php_snips = {
       ],
   ],
   ]]
-  , {i(1), i(2), rep(1), i(3), i(4), i(5), i(0)}))
+  , {i(1), snakeTitleNode(1), rep(1), i(2), i(3), i(4), i(0)}))
 }
 
 local opts = {}

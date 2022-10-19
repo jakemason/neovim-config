@@ -11,7 +11,7 @@ syn region twigLogicRegion start='{%' end='%}' fold transparent contains=twigLog
 syn region outPutRegion start='{{' end='}}'
 
 " Keywords
-syn keyword twigLogic containedin=twigLogicRegion for if not endif endfor in include with set and or
+syn keyword twigLogic containedin=twigLogicRegion for if elseif not endif endfor in include with set and or
 
 " Matches
 syn match twigKey "^\s*[A-Za-z].*:" containedin=twigLogicRegion
