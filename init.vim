@@ -16,12 +16,11 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'vimwiki/vimwiki', {'branch': 'dev' } " the master branch hasn't been updated since 2020...
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
-
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
 
-Plug 'akinsho/toggleterm.nvim', {'tag' : 'v2.*'}
+Plug 'akinsho/toggleterm.nvim'
 
 " LSP support, autocompletion via nvim-cmp
 Plug 'williamboman/nvim-lsp-installer'
@@ -42,7 +41,6 @@ Plug 'windwp/nvim-autopairs'
 
 " Colorscheme
 Plug 'rebelot/kanagawa.nvim'
-
 " Easily comment out blocks of code at a time
 Plug 'preservim/nerdcommenter'
 
@@ -60,8 +58,11 @@ Plug 'tikhomirov/vim-glsl'
 " automatically change matching tag in html
 Plug 'AndrewRadev/tagalong.vim'
 
+" jump to where you want to go quickly
+Plug 'ggandor/leap.nvim'
+
 " close html tags automatically
-Plug 'alvan/vim-closetag'
+Plug 'alvan/vim-closetag' " This bugs me so much during C/C++ work
 
 " PHP formatting
 Plug 'stephpy/vim-php-cs-fixer'
@@ -91,7 +92,37 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jakemason/ouroboros.nvim'
 
+" colorscheme experiments
+Plug 'arcticicestudio/nord-vim'
+Plug 'cranberry-clockworks/coal.nvim'
 call plug#end()
+
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.twig'
+
+let g:gutentags_ctags_exclude = [
+      \'.git',
+      \'.svn',
+      \'.hg',
+      \'bundle',
+      \'min',
+      \'vendor',
+      \'*.min.*,'
+      \'*.map',
+      \'*.swp',
+      \'*.bak',
+      \'*.pyc',
+      \'*.class',
+      \'*.sln',
+      \'*.Master',
+      \'*.csproj',
+      \'user',
+      \'*.cache',
+      \'*.dll',
+      \'*.pdb',
+      \'tags',
+      \'cscope.*,'
+      \'*.tar.*,']
+
 
 lua<<EOF
 require("toggleterm").setup{}
@@ -118,6 +149,12 @@ command! -nargs=1 Silent
 " TODO: Maybe it's worth running this on something like BufLeave rather than
 " on write?
 map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                     LEAP CONFIG                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua require('leap').add_default_mappings()
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -273,7 +310,8 @@ lua <<EOF
 
 
   -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
   require("nvim-lsp-installer").setup {
     automatic_installation = true
@@ -306,13 +344,16 @@ lua <<EOF
   	"cssls",
   	"html",
   	"graphql",
+    "gopls",
+    "tsserver",
+    "vuels",
 --  	"tailwindcss",
 --    "vimls"
   }
 
   local server_configs = {
     emmet_ls = {
-      filetypes = { 'twig', 'html.twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
+      filetypes = { 'twig', 'html.twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less', 'php' },
     },
     intelephense = {
       intelephense = {
@@ -416,7 +457,8 @@ lua <<EOF
   lspconfig.emmet_ls.setup({
       on_attach = on_attach,
       capabilities = capabilities,
-      filetypes = { 'twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
+      filetypes = { 'twig', 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss',
+      'less', 'php' },
   })
 
 
@@ -549,9 +591,10 @@ EOF
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
 " nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <c-f>      <cmd>Telescope git_files<cr>
-nnoremap <leader>ff <cmd>Telescope git_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader><leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader><leader>f <cmd>Telescope find_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
@@ -589,7 +632,6 @@ set laststatus=2
 
 set statusline+=%#warningmsg#
 set statusline+=%*
-
 
 lua << EOF
 require('lualine').setup {
@@ -629,13 +671,14 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup mapping to call :LazyGit
 nnoremap <silent> <leader>gg :LazyGit<CR>
+nnoremap <silent> <leader><leader>g :LazyGit<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                 AUTOPAIRS CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
-require("nvim-autopairs").setup {}
+-- require("nvim-autopairs").setup {}
 EOF
 
 
@@ -649,7 +692,6 @@ EOF
 set noswapfile
 
 set spell
-
 
 " Ignore case when searching for files with ctrlp, or in files themselves
 set ignorecase
@@ -761,12 +803,14 @@ set termguicolors
 set t_Co=256
 
 set background=dark
-colorscheme kanagawa
+" colorscheme kanagawa
+colorscheme nord 
 
 " Set Terminal Colors
 " These terminal colors are important with anything that
 " uses the terminal colors by default such as LazyGit
 
+"""""""""""" KANAGAWA LAZY GIT THEME
 " Black
 let g:terminal_color_0  = '#000000' " Normal
 let g:terminal_color_8  = '#808080' " Bright
@@ -791,7 +835,6 @@ let g:terminal_color_14 = '#7e9cd8' " Bright
 " White
 let g:terminal_color_7  = '#c0c0c0' " Normal
 let g:terminal_color_15 = '#f2f2f2' " Bright
-
 
 " Custom word highlighting
 augroup vimrc_todo
