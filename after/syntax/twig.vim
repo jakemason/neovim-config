@@ -12,7 +12,7 @@ syn region outPutRegion start='{{' end='}}'
 syn region commentRegion start='{#' end='#}'
 
 " Keywords
-syn keyword twigLogic containedin=twigLogicRegion for if elseif not endif endfor in include with set and or
+syn keyword twigLogic containedin=twigLogicRegion fn for if elseif else not endif endfor in include with set and or macro as
 
 " Matches
 syn match twigKey "^\s*[A-Za-z].*:" containedin=twigLogicRegion

@@ -73,21 +73,34 @@ local snakeTitleNode = function(insert_node_id)
   insert_node_id)
 end
 
+
+
 --
 --
 --           SNIPPETS
 --
 --
+
+------------------------------------
+--------------- PHP ----------------
+------------------------------------
 local js_snips = {
   postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ");")}),
   postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ");")}),
 }
 
+------------------------------------
+------------ (S)CSS ----------------
+------------------------------------
 local css_snips = {
   snippet("!", fmt("!important;{}", { i(0) })),
+  snippet("df", fmta("@include down-from(<>){<>};<>", { i(1), i(2), i(0) })),
+  snippet("uf", fmta("@include up-from(<>){<>};<>", { i(1), i(2), i(0) })),
 }
 
-
+------------------------------------
+-------------- C/C++ ---------------
+------------------------------------
 local c_cpp_snips = {
   snippet("cl", fmta([[ 
     #ifndef <>_HPP
@@ -105,6 +118,9 @@ local c_cpp_snips = {
     ),
 }
 
+------------------------------------
+-------------- TWIG ----------------
+------------------------------------
 local twig_snips = {
   snippet("dd", fmta ("{{ dd(<>) }}<>", { i(1), i(0) })),
 
@@ -137,6 +153,9 @@ local twig_snips = {
   ))
 }
 
+------------------------------------
+--------------- PHP ----------------
+------------------------------------
 local php_snips = {
   snippet("dd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';", {i(0)})),
 

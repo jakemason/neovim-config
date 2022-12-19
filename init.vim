@@ -16,6 +16,7 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'vimwiki/vimwiki', {'branch': 'dev' } " the master branch hasn't been updated since 2020...
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
+Plug 'ziglang/zig.vim'
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
@@ -97,6 +98,8 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'cranberry-clockworks/coal.nvim'
 call plug#end()
 
+let g:netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
+
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.twig'
 
 let g:gutentags_ctags_exclude = [
@@ -125,8 +128,26 @@ let g:gutentags_ctags_exclude = [
 
 
 lua<<EOF
-require("toggleterm").setup{}
+require("toggleterm").setup{
+shell = 'powershell'
+}
+
+function _G.set_terminal_keymaps()
+  local opts = {buffer = 0}
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+end
+
+-- if you only want these mappings for toggle term use term://*toggleterm#* instead
+vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
 EOF
+
+map <leader>t :ToggleTerm direction=float<CR>
+
+
+
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  PRETTIER CONFIG                    "
@@ -345,6 +366,7 @@ lua <<EOF
   	"html",
   	"graphql",
     "gopls",
+    "zls",
     "tsserver",
     "vuels",
 --  	"tailwindcss",
@@ -670,9 +692,35 @@ EOF
 "                   LAZYGIT CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup mapping to call :LazyGit
-nnoremap <silent> <leader>gg :LazyGit<CR>
-nnoremap <silent> <leader><leader>g :LazyGit<CR>
+" nnoremap <silent> <leader>gg :LazyGit<CR>
+" nnoremap <silent> <leader><leader>g :LazyGit<CR>
 
+lua<<EOF
+local Terminal  = require('toggleterm.terminal').Terminal
+local lazygit = Terminal:new({
+  cmd = "lazygit",
+  dir = "git_dir",
+  direction = "float",
+  float_opts = {
+    border = "double",
+  },
+  -- function to run on opening the terminal
+  on_open = function(term)
+    vim.cmd("startinsert!")
+    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+  end,
+  -- function to run on closing the terminal
+  on_close = function(term)
+    vim.cmd("startinsert!")
+  end,
+})
+
+function _lazygit_toggle()
+  lazygit:toggle()
+end
+
+vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                 AUTOPAIRS CONFIG                    "
