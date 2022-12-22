@@ -25,6 +25,15 @@ vim.keymap.set({"i", "s" }, "<c-enter>", function()
     end
 end, {silent = true })
 
+vim.keymap.set({"i", "s" }, "<enter>", function()
+    if ls.expand_or_jumpable() then
+      ls.expand_or_jump()
+    else
+      -- if we can't expand, we just feed the regular ol' <enter> sequence to do a newline
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<enter>", true, false, true), "n", false)
+    end
+end, {silent = true })
+
 vim.keymap.set({"i", "s" }, "<s-enter>", function()
     if ls.expand_or_jumpable() then
         ls.expand_or_jump()
@@ -82,7 +91,7 @@ end
 --
 
 ------------------------------------
---------------- PHP ----------------
+---------------- JS ----------------
 ------------------------------------
 local js_snips = {
   postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ");")}),
@@ -162,6 +171,8 @@ local php_snips = {
   snippet("ddd", fmt("echo '<pre>';\nvar_dump({});\necho '</pre>';die();", {i(0)})),
 
   snippet("dds", fmt("echo '<pre style=\"display: none !important;\">';\nvar_dump({});\necho '</pre>';", {i(0)})),
+
+  snippet("for", fmt("for({} = 0; {} < sizeof({}); {}++) {{ \n {}\n}}\n{}",  {i(1), rep(1), i(2), rep(1), i(3), i(0)})),
 
   snippet("field", fmt(
   [[
