@@ -127,10 +127,9 @@ let g:gutentags_ctags_exclude = [
       \'*.tar.*,']
 
 
-lua<<EOF
-require("toggleterm").setup{
-shell = 'powershell'
-}
+lua << EOF
+
+require("toggleterm").setup{ shell = 'powershell'}
 
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}
@@ -762,6 +761,10 @@ let &t_ut=''
 " diagnostics appear/become resolved.
 set signcolumn=yes
 
+" use 'tree' view in netrw by default
+let g:netrw_liststyle = 3
+" disable the instructions banner in netrw
+let g:netrw_banner = 0
 
 set clipboard^=unnamed,unnamedplus
 set showtabline=0
