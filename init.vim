@@ -51,6 +51,9 @@ Plug 'arnaud-lb/vim-php-namespace'
 " Critical for easily moving between quickfix entries ]q, [q and more, etc 
 Plug 'tpope/vim-unimpaired'
 
+" For quick commenting out of lines
+Plug 'tpope/vim-commentary'
+
 " Allows respecting case during search / replace
 Plug 'tpope/vim-abolish'
 
@@ -72,7 +75,6 @@ Plug 'stephpy/vim-php-cs-fixer'
 " Requires some global npm installs:
 " npm install -g prettier
 " npm install -g prettier-plugin-twig-melody
-
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install --frozen-lockfile --production',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
@@ -96,6 +98,8 @@ Plug 'jakemason/ouroboros.nvim'
 " colorscheme experiments
 Plug 'arcticicestudio/nord-vim'
 Plug 'cranberry-clockworks/coal.nvim'
+
+Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
 let g:netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
@@ -142,10 +146,6 @@ vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 EOF
 
 map <leader>t :ToggleTerm direction=float<CR>
-
-
-
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -337,18 +337,37 @@ lua <<EOF
     automatic_installation = true
   }
   
+  local border = {
+    {"╭", "FloatBorder"},
+    {"─", "FloatBorder"},
+    {"╮", "FloatBorder"},
+    {"│", "FloatBorder"},
+    {"╯", "FloatBorder"},
+    {"─", "FloatBorder"},
+    {"╰", "FloatBorder"},
+    {"│", "FloatBorder"},
+  }
+
+  local handlers =  {
+    ["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border}),
+    ["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, {border = border }),
+  }
+
   local on_attach = function(client, bufnr)
+
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     vim.keymap.set('n', '<leader>df', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
     vim.keymap.set({"n", "v"}, "K", vim.lsp.buf.hover, { buffer = 0 }) -- show documentation
-
     -- autoformat any buffer running an LSP
     -- vim.api.nvim_command[[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
   end
 
 
-  local lspconfig = require('lspconfig')
+  -- This enables borders for the LSP Info windows and alike
+  require('lspconfig.ui.windows').default_options.border = 'rounded'
 
+
+  local lspconfig = require('lspconfig')
 
   local servers = {
     "intelephense",
@@ -440,18 +459,20 @@ lua <<EOF
           "genesis",
           "polylang"
         },
+        files = {maxSize = 10000000 },
         environment = {
           -- WordPress' older style makes it incompatible with LSP configs. These stubs fix that.
           -- First, you need to install them somewhere:
           -- composer require php-stubs/wordpress-globals php-stubs/wordpress-stubs php-stubs/woocommerce-stubs php-stubs/acf-pro-stubs wpsyntex/polylang-stubs php-stubs/genesis-stubs php-stubs/wp-cli-stubs
           -- Then, include the path to them:
-          includePaths = 'E:/DevApps/lsp_stubs/vendor/php-stubs/'
+          includePaths = { 
+            "E:\\DevApps\\lsp_stubs\\vendor\\php-stubs",
+            "E:\\DevApps\\lsp_stubs\\vendor\\php-stubs\\acf-pro-stubs"
+          }
         },
       }
     }
   }
-
-
 
   for _, lsp in pairs(servers) do
     local lsp_settings = {}
@@ -461,9 +482,12 @@ lua <<EOF
   	lspconfig[lsp].setup({
   		on_attach = on_attach,
   		capabilities = capabilities,
-      settings = lsp_settings
+      settings = lsp_settings,
+      handlers = handlers
   	})
   end
+
+  require'lspconfig'.rust_analyzer.setup{}
 
   -- clangd is called by the below which follows a separate format
   -- than the servers above.
@@ -488,6 +512,25 @@ lua <<EOF
     local hl = "DiagnosticSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
+
+EOF
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                RUST TOOLS CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua << EOF
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      -- Hover actions
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      -- Code action groups
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
 
 EOF
 
@@ -844,10 +887,15 @@ set listchars=tab:▸\ ,eol:¬
 " Uncomment this to enable by default:
 " set list " To enable by default
 " Or use your leader key + l to toggle on/off
-map <leader>l :set list!<CR> " Toggle tabs and EOL
+
+" Toggle tabs and EOL
+map <leader>l :set list!<CR>
 
 " quick command for editing init.vim
 map <leader><leader>e :e $MYVIMRC<CR>
+
+" <leader> / to comment selection - requires tpope/commentary
+map <leader>/ :Commentary<CR> 
 
 " Color scheme (terminal)
 set termguicolors

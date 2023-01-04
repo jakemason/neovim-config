@@ -108,6 +108,13 @@ local css_snips = {
 }
 
 ------------------------------------
+--------------- ZIG ----------------
+------------------------------------
+local zig_snips = {
+  snippet("print", fmt("std.debug.print(\"{}\\n\", .{{{}}});{}", { i(1), i(2), i(0) })),
+}
+
+------------------------------------
 -------------- C/C++ ---------------
 ------------------------------------
 local c_cpp_snips = {
@@ -215,3 +222,4 @@ ls.add_snippets("c", c_cpp_snips, opts)
 ls.add_snippets("cpp", c_cpp_snips, opts)
 ls.add_snippets("php", php_snips, opts)
 ls.add_snippets("javascript", js_snips, opts)
+ls.add_snippets("zig", zig_snips, opts)
