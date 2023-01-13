@@ -734,6 +734,7 @@ EOF
 "                   LAZYGIT CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup mapping to call :LazyGit
+" rendered obsolete from ToggleTerm
 " nnoremap <silent> <leader>gg :LazyGit<CR>
 " nnoremap <silent> <leader><leader>g :LazyGit<CR>
 
@@ -896,6 +897,9 @@ map <leader><leader>e :e $MYVIMRC<CR>
 
 " <leader> / to comment selection - requires tpope/commentary
 map <leader>/ :Commentary<CR> 
+
+" Open current directory in OS
+map <leader>o :silent !explorer.exe .<CR>
 
 " Color scheme (terminal)
 set termguicolors
