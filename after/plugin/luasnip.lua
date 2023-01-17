@@ -112,6 +112,8 @@ local css_snips = {
 ------------------------------------
 local zig_snips = {
   snippet("print", fmt("std.debug.print(\"{}\\n\", .{{{}}});{}", { i(1), i(2), i(0) })),
+  postfix(".print", { lambda("std.debug.print(\"{any}\\n\", " .. lambda.POSTFIX_MATCH .. ");")}),
+  postfix(".log",   { lambda("std.debug.print(\"{any}\\n\", " .. lambda.POSTFIX_MATCH .. ");")}),
 }
 
 ------------------------------------

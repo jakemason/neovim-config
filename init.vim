@@ -92,7 +92,7 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 " Plug 'rmagatti/session-lens'
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'jakemason/ouroboros.nvim'
 
 " colorscheme experiments
