@@ -25,14 +25,15 @@ vim.keymap.set({"i", "s" }, "<c-enter>", function()
     end
 end, {silent = true })
 
-vim.keymap.set({"i", "s" }, "<enter>", function()
-    if ls.expand_or_jumpable() then
-      ls.expand_or_jump()
-    else
-      -- if we can't expand, we just feed the regular ol' <enter> sequence to do a newline
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<enter>", true, false, true), "n", false)
-    end
-end, {silent = true })
+-- THIS DOES NOT WORK AND MAKES LIFE MISERABLE :(
+-- vim.keymap.set({"i", "s" }, "<enter>", function()
+--     if ls.expand_or_jumpable() then
+--       ls.expand_or_jump()
+--     else
+--       -- if we can't expand, we just feed the regular ol' <enter> sequence to do a newline
+--       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<enter>", true, false, true), "n", false)
+--     end
+-- end, {silent = true })
 
 vim.keymap.set({"i", "s" }, "<s-enter>", function()
     if ls.expand_or_jumpable() then
