@@ -77,7 +77,7 @@ Plug 'stephpy/vim-php-cs-fixer'
 " npm install -g prettier-plugin-twig-melody
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install --frozen-lockfile --production',
-  \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+  \ 'for': ['html.twig', 'twig', 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
@@ -142,6 +142,8 @@ end
 
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+
 
 EOF
 
@@ -374,7 +376,7 @@ lua <<EOF
     "psalm",
   	"tsserver",
   	"pyright",
-    "sumneko_lua",
+    "lua_ls",
   	"eslint",
   	"bashls",
     "emmet_ls",
@@ -655,6 +657,7 @@ EOF
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
 " nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <c-f>      <cmd>Telescope git_files<cr>
+nnoremap <leader>fu <cmd>Telescope lsp_references<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader><leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
