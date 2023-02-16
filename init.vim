@@ -1,4 +1,4 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"on_project_selected """"""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -71,13 +71,15 @@ Plug 'alvan/vim-closetag' " This bugs me so much during C/C++ work
 " PHP formatting
 Plug 'stephpy/vim-php-cs-fixer'
 
+Plug 'sbdchd/neoformat'
+
 " Prettier formatting
 " Requires some global npm installs:
 " npm install -g prettier
 " npm install -g prettier-plugin-twig-melody
-Plug 'prettier/vim-prettier', {
-  \ 'do': 'yarn install --frozen-lockfile --production',
-  \ 'for': ['html.twig', 'twig', 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+" Plug 'prettier/vim-prettier', {
+"   \ 'do': 'yarn install --frozen-lockfile --production',
+"   \ 'for': ['html.twig', 'twig', 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
@@ -151,26 +153,35 @@ map <leader>t :ToggleTerm direction=float<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                  NEOFORMAT CONFIG                   "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup fmt
+  autocmd!
+  autocmd BufWritePre * undojoin | Neoformat
+augroup END
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  PRETTIER CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:prettier#autoformat = 1 " format on save
+"let g:prettier#autoformat = 1 " format on save
 
-" autosave even on files that don't start with @format
-let g:prettier#autoformat_require_pragma = 0 
+"" autosave even on files that don't start with @format
+"let g:prettier#autoformat_require_pragma = 0 
 
-command! -nargs=1 Silent
-\   execute 'silent !' . <q-args>
-\ | execute 'redraw!'
+"command! -nargs=1 Silent
+"\   execute 'silent !' . <q-args>
+"\ | execute 'redraw!'
 
-" So .twig doesn't do autosaving through vim very well. It can be done,
-" but every time you run it the cursor position is reset. I tried doing
-" some sort of getpos / setpos sequence but something with the fact that
-" the file/buffer reloads breaks that sequence. Thus, I just manually save
-" these via this command.
-"
-" TODO: Maybe it's worth running this on something like BufLeave rather than
-" on write?
-map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
+"" So .twig doesn't do autosaving through vim very well. It can be done,
+"" but every time you run it the cursor position is reset. I tried doing
+"" some sort of getpos / setpos sequence but something with the fact that
+"" the file/buffer reloads breaks that sequence. Thus, I just manually save
+"" these via this command.
+""
+"" TODO: Maybe it's worth running this on something like BufLeave rather than
+"" on write?
+"map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -626,7 +637,22 @@ require("telescope").setup{
     }
 }
 
+local function closeSession()
+ -- if we're currently tracking in an active project, we want to pause that
+ -- by calling Obsess before we open the next project. If we don't project #2
+ -- will track the session in project #1's Session.vim file
+ if vim.g.this_obsession then
+  vim.cmd('silent! Obsess')
+ end
+end
+
 local function loadSession()
+ -- store the project directory we just switched into because our bwipeout call
+ -- below will change it again and we need to switch to it after the clear out
+ project_directory = vim.fn.getcwd(); 
+ -- need to wipeout all open buffers or Telescope lingers on the last project
+ vim.cmd('silent! bufdo! bwipeout') 
+ vim.cmd('cd ' .. project_directory)
  if(vim.fn.filereadable('Session.vim') ~= 0) then
    -- start a new scratch file just to stop nvim from throwing a floating
    -- window error if we attempt to source without having a non-floating 
@@ -637,7 +663,7 @@ local function loadSession()
    -- scratch file above so abruptly
    vim.cmd('silent! source Session.vim')
 
-   -- escapes from Insert mode which the source above will leave us in by default
+   -- escapes from Insert mode, which the source call above will leave us in by default
    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>',true,false,true),'m',true)
   end
 end
@@ -647,7 +673,8 @@ vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,te
 require("project_nvim").setup { 
   detection_methods = { "pattern" },
   patterns = { ".git", ".svn" },  -- only register versioning roots as projects
-  custom_callback = loadSession
+  after_project_selection_callback = loadSession,
+  before_project_selection_callback = closeSession
 }
 
 require('telescope').load_extension("projects")
@@ -656,12 +683,12 @@ EOF
 " Find files using Telescope command-line sugar.
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
 " nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <c-f>      <cmd>Telescope git_files<cr>
+nnoremap <c-f>      <cmd>Telescope find_files<cr>
 nnoremap <leader>fu <cmd>Telescope lsp_references<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader><leader>g <cmd>Telescope live_grep<cr>
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader><leader>f <cmd>Telescope find_files<cr>
+nnoremap <leader>ff <cmd>Telescope git_files<cr>
+nnoremap <leader><leader>f <cmd>Telescope git_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>

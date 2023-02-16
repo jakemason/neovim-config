@@ -127,6 +127,7 @@ local c_cpp_snips = {
 
     class <>
     {
+      public:
         <>
     };
 
