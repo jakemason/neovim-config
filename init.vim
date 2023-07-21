@@ -13,7 +13,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'vimwiki/vimwiki', {'branch': 'dev' } " the master branch hasn't been updated since 2020...
 Plug 'rhysd/vim-clang-format'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
 Plug 'ziglang/zig.vim'
@@ -23,8 +22,11 @@ Plug 'kdheepak/lazygit.nvim'
 
 Plug 'akinsho/toggleterm.nvim'
 
-" LSP support, autocompletion via nvim-cmp
-Plug 'williamboman/nvim-lsp-installer'
+" LSP support, autocompletion via nvim-cmp'
+
+" Plug 'williamboman/nvim-lsp-installer' " replaced by mason.nvim
+Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
+Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -157,7 +159,7 @@ map <leader>t :ToggleTerm direction=float<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup fmt
   autocmd!
-  autocmd BufWritePre * undojoin | Neoformat
+  autocmd BufWritePre * silent! undojoin | Neoformat
 augroup END
 
 
@@ -346,9 +348,12 @@ lua <<EOF
   -- local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-  require("nvim-lsp-installer").setup {
-    automatic_installation = true
-  }
+  require("mason").setup();
+  require("mason-lspconfig").setup()
+  -- replaced by mason.nvim
+  -- require("nvim-lsp-installer").setup {
+  --  automatic_installation = true
+  -- }
   
   local border = {
     {"╭", "FloatBorder"},
@@ -574,15 +579,6 @@ endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                   VIM WIKI CONFIG                   "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua<<EOF
-local config_directory = vim.fn.stdpath('config')
-vim.g.vimwiki_list = {{ path = config_directory .. '/wiki' }}
-EOF
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   GITSIGNS CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua << EOF
@@ -651,7 +647,8 @@ local function loadSession()
  -- below will change it again and we need to switch to it after the clear out
  project_directory = vim.fn.getcwd(); 
  -- need to wipeout all open buffers or Telescope lingers on the last project
- vim.cmd('silent! bufdo! bwipeout') 
+ -- vim.cmd('silent! bufdo! bwipeout') 
+ vim.cmd('silent! %bwipeout!') 
  vim.cmd('cd ' .. project_directory)
  if(vim.fn.filereadable('Session.vim') ~= 0) then
    -- start a new scratch file just to stop nvim from throwing a floating
@@ -919,6 +916,19 @@ set listchars=tab:▸\ ,eol:¬
 " set list " To enable by default
 " Or use your leader key + l to toggle on/off
 
+
+"set makeprg=C:\d10\scripts\compile_commands\build_editor_debug.cmd
+
+function! BuildProject(build_path)
+  let path_string = a:build_path
+  execute "set makeprg=" . path_string
+  echom "Executing build..."
+  silent! execute 'make'
+  echom ""
+  redraw!
+endfunction
+map <leader><leader>b :call BuildProject('C:\d10\scripts\compile_commands\build_editor_debug.cmd')<CR>
+
 " Toggle tabs and EOL
 map <leader>l :set list!<CR>
 
@@ -936,8 +946,8 @@ set termguicolors
 set t_Co=256
 
 set background=dark
-" colorscheme kanagawa
-colorscheme nord 
+colorscheme kanagawa
+" colorscheme nord 
 
 " Infinite & persistent undo
 " Put plugins and dictionaries in this dir (also on Windows)
@@ -1001,6 +1011,17 @@ highlight! vimTodo guibg='#e6c384'
 highlight! cTodo guibg='#e6c384'
 
 
+" Automatically open, but do not go to (if there are errors) the quickfix /
+" location list window, or close it when is has become empty.
+"
+" Note: Must allow nesting of autocmds to enable any customizations for quickfix
+" buffers.
+" Note: Normally, :cwindow jumps to the quickfix window if the command opens it
+" (but not if it's already open). However, as part of the autocmd, this doesn't
+" seem to happen.
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+
 " Calling WipeReg removes clears and removes all saved registers
 command! WipeReg for i in range(33,126) | silent! call setreg(nr2char(i), []) | endfor
 
@@ -1025,10 +1046,11 @@ endfunction
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
 
 " Set font
-let s:fontsize = 13
+let s:fontsize = 14
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
-  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
+"  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
+  let command = 'set guifont=BerkeleyMono\ Nerd\ Font\ Mono:h' . s:fontsize
   :execute command
   echom "Font Size Now:" . s:fontsize
 endfunction
