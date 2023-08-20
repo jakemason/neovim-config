@@ -22,6 +22,8 @@ Plug 'kdheepak/lazygit.nvim'
 
 Plug 'akinsho/toggleterm.nvim'
 
+Plug 'nacro90/numb.nvim'
+
 " LSP support, autocompletion via nvim-cmp'
 
 " Plug 'williamboman/nvim-lsp-installer' " replaced by mason.nvim
@@ -136,6 +138,8 @@ let g:gutentags_ctags_exclude = [
 
 
 lua << EOF
+
+require('numb').setup()
 
 require("toggleterm").setup{ shell = 'powershell'}
 
@@ -793,14 +797,6 @@ vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>lua _lazygit_toggle()<CR
 EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                 AUTOPAIRS CONFIG                    "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua << EOF
--- require("nvim-autopairs").setup {}
-EOF
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " I know this is basically blasphemy in the Vim world, but I can count
@@ -915,9 +911,6 @@ set listchars=tab:▸\ ,eol:¬
 " Uncomment this to enable by default:
 " set list " To enable by default
 " Or use your leader key + l to toggle on/off
-
-
-"set makeprg=C:\d10\scripts\compile_commands\build_editor_debug.cmd
 
 function! BuildProject(build_path)
   let path_string = a:build_path
