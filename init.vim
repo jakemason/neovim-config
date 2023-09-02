@@ -915,12 +915,12 @@ set listchars=tab:▸\ ,eol:¬
 function! BuildProject(build_path)
   let path_string = a:build_path
   execute "set makeprg=" . path_string
-  echom "Executing build..."
+  echom "Executing build @ " . path_string ."..."
   silent! execute 'make'
   echom ""
   redraw!
 endfunction
-map <leader><leader>b :call BuildProject('C:\d10\scripts\compile_commands\build_editor_debug.cmd')<CR>
+map <leader><leader>b :call BuildProject('C:\athena\utils\compile_commands\build_editor_debug.cmd')<CR>
 
 " Toggle tabs and EOL
 map <leader>l :set list!<CR>
