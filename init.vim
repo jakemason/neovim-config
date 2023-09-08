@@ -141,7 +141,12 @@ lua << EOF
 
 require('numb').setup()
 
-require("toggleterm").setup{ shell = 'powershell'}
+-- On Mac we use whatever the default shell is, on Windows we need to specify powershell
+if (vim.fn.has('macunix')) then
+  require("toggleterm").setup()
+else 
+  require("toggleterm").setup{ shell = 'powershell' }
+end
 
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}
