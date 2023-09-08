@@ -1,4 +1,4 @@
-"on_project_selected """"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -1040,6 +1040,11 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 
 " Set font
 let s:fontsize = 14
+
+if has('macunix')
+ let s:fontsize = 17
+endif
+
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
 "  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
