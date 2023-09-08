@@ -1041,6 +1041,8 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 " Set font
 let s:fontsize = 14
 
+" The DPI settings on the new MacBook means that 14 is too small, so we bump it up to 17
+" specifically on OSX
 if has('macunix')
  let s:fontsize = 17
 endif
