@@ -1,4 +1,4 @@
-"on_project_selected """"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -141,7 +141,12 @@ lua << EOF
 
 require('numb').setup()
 
-require("toggleterm").setup{ shell = 'powershell'}
+-- On Mac we use whatever the default shell is, on Windows we need to specify powershell
+if (vim.fn.has('macunix')) then
+  require("toggleterm").setup()
+else 
+  require("toggleterm").setup{ shell = 'powershell' }
+end
 
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}
@@ -1010,6 +1015,13 @@ autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | en
 
 " Set font
 let s:fontsize = 14
+
+" The DPI settings on the new MacBook means that 14 is too small, so we bump it up to 17
+" specifically on OSX
+if has('macunix')
+ let s:fontsize = 17
+endif
+
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
 "  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
