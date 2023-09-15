@@ -1,7 +1,7 @@
 --
 --
 --          CONFIG
---
+-- 
 --
 local ls = require "luasnip"
 
@@ -96,7 +96,7 @@ end
 ------------------------------------
 local js_snips = {
   postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ");")}),
-  postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. ");")}),
+  postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. "); // eslint-disable-line no-console")}),
 }
 
 ------------------------------------
@@ -216,8 +216,16 @@ local php_snips = {
   , {i(1), snakeTitleNode(1), rep(1), i(2), i(3), i(4), i(0)}))
 }
 
+------------------------------------
+--------------- ALL ----------------
+------------------------------------
+local all_snips = {
+  snippet("TODO", fmt("TODO (Jake Mason - {})", {os.date("%x")})),
+}
+
 local opts = {}
 opts['override_priority'] = 1001; -- default is 1000 and we always want our custom ones first
+ls.add_snippets("all", all_snips, opts)
 ls.add_snippets("css", css_snips, opts)
 ls.add_snippets("scss", css_snips, opts)
 ls.add_snippets("html", twig_snips, opts)
