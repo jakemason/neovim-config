@@ -220,12 +220,13 @@ local php_snips = {
 --------------- ALL ----------------
 ------------------------------------
 local all_snips = {
-  snippet("TODO", fmt("TODO (Jake Mason - {})", {os.date("%x")})),
+  -- This one is rendered obsolete by the iabbrev command I'm using instead
+  -- snippet("TODO", fmt("TODO (Jake Mason - {})", {os.date("%x")})),
 }
 
 local opts = {}
 opts['override_priority'] = 1001; -- default is 1000 and we always want our custom ones first
-ls.add_snippets("all", all_snips, opts)
+-- ls.add_snippets("all", all_snips, opts)
 ls.add_snippets("css", css_snips, opts)
 ls.add_snippets("scss", css_snips, opts)
 ls.add_snippets("html", twig_snips, opts)

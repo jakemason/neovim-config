@@ -878,6 +878,7 @@ set showmatch
 " Clear last search highlighting when hitting space 
 map <space> :noh<cr>
 
+iabbrev TODO TODO -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 " Quickly source Session.vim in cwd
 " map <leader>s :source Session.vim<CR>
 
