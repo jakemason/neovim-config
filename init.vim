@@ -879,6 +879,10 @@ set showmatch
 map <space> :noh<cr>
 
 iabbrev TODO TODO -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
+iabbrev NOTE NOTE -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
+iabbrev PERF PERF -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
+iabbrev BUG BUG -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
+iabbrev FIXME FIXME -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 " Quickly source Session.vim in cwd
 " map <leader>s :source Session.vim<CR>
 
