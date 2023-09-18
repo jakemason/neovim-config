@@ -232,6 +232,13 @@ lua<<EOF
   vim.keymap.set("n", "<leader>[", ui.nav_prev)
   vim.keymap.set("n", "<leader>]", ui.nav_next)
   vim.keymap.set("n", "<leader>]", ui.nav_next)
+
+  vim.keymap.set("n", "<leader>m1", function() ui.nav_file(1) end)
+  vim.keymap.set("n", "<leader>m2", function() ui.nav_file(2) end)
+  vim.keymap.set("n", "<leader>m3", function() ui.nav_file(3) end)
+  vim.keymap.set("n", "<leader>m4", function() ui.nav_file(4) end)
+  vim.keymap.set("n", "<leader>m5", function() ui.nav_file(5) end)
+  vim.keymap.set("n", "<leader>m6", function() ui.nav_file(6) end)
 EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    LUASNIP CONFIG                   "
