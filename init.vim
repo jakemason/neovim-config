@@ -24,6 +24,8 @@ Plug 'akinsho/toggleterm.nvim'
 
 Plug 'nacro90/numb.nvim'
 
+Plug 'ThePrimeagen/harpoon'
+
 " LSP support, autocompletion via nvim-cmp'
 
 " Plug 'williamboman/nvim-lsp-installer' " replaced by mason.nvim
@@ -218,6 +220,19 @@ autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
 autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                   HARPOON CONFIG                    "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua<<EOF
+  local mark = require("harpoon.mark")
+  local ui = require("harpoon.ui")
+
+  vim.keymap.set("n", "<leader>m", mark.add_file)
+  -- vim.keymap.set("n", "<leader>fm", ui.toggle_quick_menu) -- using Telescope instead
+  vim.keymap.set("n", "<leader>[", ui.nav_prev)
+  vim.keymap.set("n", "<leader>]", ui.nav_next)
+  vim.keymap.set("n", "<leader>]", ui.nav_next)
+EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                    LUASNIP CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -682,6 +697,7 @@ require("project_nvim").setup {
 }
 
 require('telescope').load_extension("projects")
+require("telescope").load_extension('harpoon')
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -696,6 +712,7 @@ nnoremap <leader><leader>f <cmd>Telescope git_files<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
+nnoremap <leader>fm <cmd>Telescope harpoon marks<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
