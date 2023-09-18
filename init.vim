@@ -438,6 +438,8 @@ lua <<EOF
     "gopls",
     "zls",
     "tsserver",
+    "prismals",
+    "sqlls",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -885,6 +887,12 @@ nnoremap k gk
 " Allows use of Ctrl-C, Ctrl-V to copy/paste from OS clipboard
 vnoremap <C-c> "+y
 nnoremap <C-v> "+p
+
+if has('macunix')
+ nnoremap <D-w> <C-w>
+ nnoremap <D-q> <C-q>
+endif
+
 
 " Allow hidden buffers - important for terminals you show/hide amongst others
 set hidden
