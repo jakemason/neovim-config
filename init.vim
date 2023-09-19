@@ -19,12 +19,11 @@ Plug 'ziglang/zig.vim'
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
-
 Plug 'akinsho/toggleterm.nvim'
-
 Plug 'nacro90/numb.nvim'
-
 Plug 'ThePrimeagen/harpoon'
+Plug 'prisma/vim-prisma'
+Plug 'jparise/vim-graphql'
 
 " LSP support, autocompletion via nvim-cmp'
 
@@ -272,6 +271,30 @@ lua <<EOF
   local feedkey = function(key, mode)
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
   end
+
+  vim.diagnostic.config({
+    virtual_text = false,
+    signs = true,
+    underline = true,
+    update_in_insert = true,
+    severity_sort = false,
+  })
+
+  vim.o.updatetime = 250
+  vim.api.nvim_create_autocmd("CursorHold", {
+    buffer = bufnr,
+    callback = function()
+      local opts = {
+        focusable = false,
+        close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+        border = 'rounded',
+        source = 'always',
+        prefix = ' ',
+        scope = 'cursor',
+      }
+      vim.diagnostic.open_float(nil, opts)
+    end
+  })
 
   cmp.setup({
     snippet = {
@@ -891,6 +914,7 @@ nnoremap <C-v> "+p
 if has('macunix')
  nnoremap <D-w> <C-w>
  nnoremap <D-q> <C-q>
+ nnoremap <D-r> <C-r>
 endif
 
 
