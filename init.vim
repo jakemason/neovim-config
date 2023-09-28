@@ -799,7 +799,12 @@ require('lualine').setup {
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {'filename'},
+    lualine_c = {
+      {
+        'filename',
+        path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+      }
+    },
     lualine_x = {'filetype'},
     lualine_y = {'os.date("%I:%M", os.time())'},
     lualine_z = {'location'}
