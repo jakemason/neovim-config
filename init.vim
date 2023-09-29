@@ -920,6 +920,7 @@ if has('macunix')
  nnoremap <D-w> <C-w>
  nnoremap <D-q> <C-q>
  nnoremap <D-r> <C-r>
+ nnoremap <D-]> <C-]>
 endif
 
 
@@ -1045,10 +1046,9 @@ augroup vimrc_todo
 augroup END
 " Testing: 
 " TODO FIXME OPTIMIZE STUDY NOTE
-highlight! MyTodo guibg='#e6c384'
-highlight! vimTodo guibg='#e6c384'
-highlight! cTodo guibg='#e6c384'
-
+highlight! MyTodo guibg='#72638a'
+highlight! vimTodo guibg='#72638a'
+highlight! cTodo guibg='#72638a'
 
 " Automatically open, but do not go to (if there are errors) the quickfix /
 " location list window, or close it when is has become empty.
