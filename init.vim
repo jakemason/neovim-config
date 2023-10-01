@@ -25,6 +25,9 @@ Plug 'ThePrimeagen/harpoon'
 Plug 'prisma/vim-prisma'
 Plug 'jparise/vim-graphql'
 
+" Used for automatic documentation generation
+Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+
 " LSP support, autocompletion via nvim-cmp'
 
 " Plug 'williamboman/nvim-lsp-installer' " replaced by mason.nvim
@@ -42,6 +45,8 @@ Plug 'onsails/lspkind.nvim'
 " Luasnip and cmp support for it
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+
+Plug 'preservim/nerdtree'
 
 Plug 'windwp/nvim-autopairs'
 
