@@ -955,6 +955,7 @@ iabbrev NOTE NOTE -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 iabbrev PERF PERF -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 iabbrev BUG BUG -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 iabbrev FIXME FIXME -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
+iabbrev MONITOR MONITOR -- Jake Mason \| (<C-R>=strftime('%x')<C-M>)
 " Quickly source Session.vim in cwd
 " map <leader>s :source Session.vim<CR>
 
@@ -1047,7 +1048,7 @@ let g:terminal_color_15 = '#f2f2f2' " Bright
 " Custom word highlighting
 augroup vimrc_todo
     au!
-    au Syntax * syn match MyTodo /\v<(FIXME|HACK|NOTE|TODO|OPTIMIZE|PERF|STUDY|PERFORMANCE|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle,cBlock,cCommentL,Comment
+    au Syntax * syn match MyTodo /\v<(FIXME|MONITOR|HACK|NOTE|TODO|OPTIMIZE|PERF|STUDY|PERFORMANCE|UPDATE|KILL|IMPORTANT|REZ|BUG)/ containedin=.*Comment,vimCommentTitle,cBlock,cCommentL,Comment
 augroup END
 " Testing: 
 " TODO FIXME OPTIMIZE STUDY NOTE
