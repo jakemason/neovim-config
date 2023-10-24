@@ -24,7 +24,7 @@ Plug 'nacro90/numb.nvim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'prisma/vim-prisma'
 Plug 'jparise/vim-graphql'
-
+Plug 'f-person/git-blame.nvim'
 " Used for automatic documentation generation
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 
@@ -784,13 +784,16 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  STATUSLINE CONFIG                  "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:gitblame_date_format = '%b %Y'
+
 " Always show status bar
 set laststatus=2
 
 set statusline+=%#warningmsg#
 set statusline+=%*
-
 lua << EOF
+local git_blame = require('gitblame')
 require('lualine').setup {
   options = {
     icons_enabled = true,
@@ -808,6 +811,10 @@ require('lualine').setup {
       {
         'filename',
         path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+      },
+      {
+       git_blame.get_current_blame_text, 
+       cond = git_blame.is_blame_text_available
       }
     },
     lualine_x = {'filetype'},
@@ -986,6 +993,11 @@ map <leader>/ :Commentary<CR>
 
 " Open current directory in OS
 map <leader>o :silent !explorer.exe .<CR>
+
+
+" Toggle NERDTree
+let NERDTreeShowHidden=1
+map <leader><leader>x :NERDTreeToggle<CR>
 
 " Color scheme (terminal)
 set termguicolors
