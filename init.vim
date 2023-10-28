@@ -765,11 +765,13 @@ lua << EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
-
-    -- For some reason the TS highlighting conflicts with the everforest theme
-    disable = { "scss", "css" },
-
-
+    disable = function(lang, buf)
+        local max_filesize = 50 * 1024 -- 50 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
@@ -779,7 +781,6 @@ require'nvim-treesitter.configs'.setup {
 }
 
 EOF
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  STATUSLINE CONFIG                  "
@@ -995,9 +996,9 @@ map <leader>/ :Commentary<CR>
 map <leader>o :silent !explorer.exe .<CR>
 
 
-" Toggle NERDTree
+" Toggle NERDTree, and open it at the current buffers folder to start
 let NERDTreeShowHidden=1
-map <leader><leader>x :NERDTreeToggle<CR>
+map <leader><leader>x :NERDTreeToggle %<CR>
 
 " Color scheme (terminal)
 set termguicolors
@@ -1103,7 +1104,7 @@ endfunction
 autocmd FileType qf if (getwininfo(win_getid())[0].loclist != 1) | wincmd J | endif
 
 " Set font
-let s:fontsize = 14
+let s:fontsize = 13
 
 " The DPI settings on the new MacBook means that 14 is too small, so we bump it up to 17
 " specifically on OSX
