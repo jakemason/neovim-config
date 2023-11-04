@@ -1,4 +1,4 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   VIM-PLUG INSTALLS                 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
@@ -468,6 +468,7 @@ lua <<EOF
     "tsserver",
     "prismals",
     "sqlls",
+    "ruby_ls",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -570,6 +571,9 @@ lua <<EOF
   end
 
   require'lspconfig'.rust_analyzer.setup{}
+  require'lspconfig'.ruby_ls.setup{
+      cmd = { "bundle", "exec", "ruby-lsp" }
+  }
 
   -- clangd is called by the below which follows a separate format
   -- than the servers above.
@@ -740,7 +744,40 @@ require("project_nvim").setup {
 
 require('telescope').load_extension("projects")
 require("telescope").load_extension('harpoon')
+
+
+
+function vim.getVisualSelection()
+	vim.cmd('noau normal! "vy"')
+	local text = vim.fn.getreg('v')
+	vim.fn.setreg('v', {})
+
+	text = string.gsub(text, "\n", "")
+	if #text > 0 then
+		return text
+	else
+		return ''
+	end
+end
+
+local keymap = vim.keymap.set
+local tb = require('telescope.builtin')
+local opts = { noremap = true, silent = true }
+
+keymap('v', '<leader>f', function()
+	local text = vim.getVisualSelection()
+	tb.current_buffer_fuzzy_find({ default_text = text })
+end, opts)
+
+keymap('v', '<leader>g', function()
+	local text = vim.getVisualSelection()
+	tb.live_grep({ default_text = text })
+end, opts)
+
 EOF
+
+
+
 
 " Find files using Telescope command-line sugar.
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
@@ -755,6 +792,8 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fp <cmd>Telescope projects<cr>
 nnoremap <leader>fm <cmd>Telescope harpoon marks<cr>
+
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -813,10 +852,10 @@ require('lualine').setup {
         'filename',
         path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
       },
-      {
-       git_blame.get_current_blame_text, 
-       cond = git_blame.is_blame_text_available
-      }
+      -- {
+      --  git_blame.get_current_blame_text, 
+      --  cond = git_blame.is_blame_text_available
+      -- }
     },
     lualine_x = {'filetype'},
     lualine_y = {'os.date("%I:%M", os.time())'},
@@ -936,7 +975,6 @@ if has('macunix')
  nnoremap <D-]> <C-]>
 endif
 
-
 " Allow hidden buffers - important for terminals you show/hide amongst others
 set hidden
 
@@ -996,9 +1034,9 @@ map <leader>/ :Commentary<CR>
 map <leader>o :silent !explorer.exe .<CR>
 
 
-" Toggle NERDTree, and open it at the current buffers folder to start
 let NERDTreeShowHidden=1
-map <leader><leader>x :NERDTreeToggle %<CR>
+" Toggle NERDTree, and open it at the current buffers folder to start
+map <leader><leader>x :NERDTreeFind %<CR>
 
 " Color scheme (terminal)
 set termguicolors
