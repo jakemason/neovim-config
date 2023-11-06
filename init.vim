@@ -880,7 +880,36 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup mapping to call :LazyGit
 " nnoremap <silent> <leader>gg :LazyGit<CR>
-nnoremap <silent> <leader><leader>g :LazyGit<CR>
+"nnoremap <silent> <leader><leader>g :LazyGit<CR>
+
+lua<<EOF
+local Terminal  = require('toggleterm.terminal').Terminal
+local lazygit = Terminal:new({
+  -- This slows down the startup time considerably for lazygit, but trying to do this on
+  -- the "on_create" hook instead unfortunately doesn't seem to work
+  cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit",
+  dir = "git_dir",
+  direction = "float",
+  float_opts = {
+    border = "double",
+  }, 
+  -- function to run on opening the terminal
+  on_open = function(term)
+    vim.cmd("startinsert!")
+    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+  end,
+  -- function to run on closing the terminal
+  on_close = function(term)
+    vim.cmd("startinsert!")
+  end,
+})
+
+function _lazygit_toggle()
+  lazygit:toggle()
+end
+
+vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
