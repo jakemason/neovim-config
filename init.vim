@@ -450,6 +450,7 @@ lua <<EOF
   local lspconfig = require('lspconfig')
 
   local servers = {
+    "clangd",
     "intelephense",
     "psalm",
   	"tsserver",
@@ -910,6 +911,7 @@ end
 
 vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
 EOF
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
