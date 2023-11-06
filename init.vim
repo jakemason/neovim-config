@@ -1248,3 +1248,54 @@ let g:clang_format#detect_style_file = 1
 
 autocmd FileType c ClangFormatAutoEnable
 autocmd FileType cpp ClangFormatAutoEnable
+
+
+
+
+lua<<EOF
+
+function faster_alphabetize_selection()
+    local start_pattern = "start%-auto%-alphabetize"
+    local end_pattern = "end%-auto%-alphabetize"
+
+    local lines = vim.fn.getline(1, '$')
+    local in_block = false
+    local block_start = 0
+    local block_lines = {}
+
+    for i, line in ipairs(lines) do
+        if string.match(line, start_pattern) then
+            if in_block then
+                -- If we were already in a block, process it
+                process_block(lines, block_start, i, block_lines)
+            end
+            in_block = true
+            block_start = i
+            block_lines = {}
+        elseif string.match(line, end_pattern) then
+            if in_block then
+                table.insert(block_lines, line)
+                process_block(lines, block_start, i, block_lines)
+            end
+            in_block = false
+        elseif in_block then
+            table.insert(block_lines, line)
+        end
+    end
+end
+
+function process_block(lines, start, end_line, block_lines)
+    table.sort(block_lines)
+
+    for i, line in ipairs(block_lines) do
+        vim.fn.setline(start + i - 1, line)
+    end
+end
+
+EOF
+
+" Create an autocommand to trigger the alphabetization on save
+augroup AlphabetizeOnSave
+  autocmd!
+  autocmd BufWritePre * :lua faster_alphabetize_selection()
+augroup END
