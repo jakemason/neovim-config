@@ -450,6 +450,7 @@ lua <<EOF
   local lspconfig = require('lspconfig')
 
   local servers = {
+    "clangd",
     "intelephense",
     "psalm",
   	"tsserver",
@@ -881,6 +882,7 @@ EOF
 " setup mapping to call :LazyGit
 " nnoremap <silent> <leader>gg :LazyGit<CR>
 nnoremap <silent> <leader><leader>g :LazyGit<CR>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      VIM CONFIG                     "
