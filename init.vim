@@ -160,7 +160,7 @@ function _G.set_terminal_keymaps()
 end
 
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
-vim.cmd('autocmd! TermOpen term://*toggleterm* lua set_terminal_keymaps()')
+-- vim.cmd('autocmd! TermOpen term://*toggleterm* lua set_terminal_keymaps()')
 
 EOF
 
@@ -881,9 +881,10 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup mapping to call :LazyGit
 " nnoremap <silent> <leader>gg :LazyGit<CR>
-"nnoremap <silent> <leader><leader>g :LazyGit<CR>
+" nnoremap <silent> <leader><leader>g :LazyGit<CR>
 
 lua<<EOF
+
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
   -- This slows down the startup time considerably for lazygit, but trying to do this on
@@ -899,6 +900,7 @@ local lazygit = Terminal:new({
     vim.cmd("startinsert!")
     vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
   end,
+
   -- function to run on closing the terminal
   on_close = function(term)
     vim.cmd("startinsert!")
@@ -910,6 +912,8 @@ function _lazygit_toggle()
 end
 
 vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+--vim.api.nvim_set_keymap("n", "<leader><leader>g", "<cmd>TermExec cmd='lazygit' go_back=0 direction='float'<CR>", {noremap = true, silent = true})
+
 EOF
 
 
@@ -1287,6 +1291,6 @@ EOF
 
 " Create an autocommand to trigger the alphabetization on save
 augroup AlphabetizeOnSave
-  autocmd!
-  autocmd BufWritePre * :lua faster_alphabetize_selection()
+ autocmd!
+ autocmd BufWritePre * :lua faster_alphabetize_selection()
 augroup END
