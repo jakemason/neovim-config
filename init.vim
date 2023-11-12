@@ -884,13 +884,19 @@ EOF
 " nnoremap <silent> <leader>gg :LazyGit<CR>
 " nnoremap <silent> <leader><leader>g :LazyGit<CR>
 
+
 lua<<EOF
+
+local cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit"
+if(vim.fn.has('win32')) then
+  cmd = "lazygit"
+end 
 
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
   -- This slows down the startup time considerably for lazygit, but trying to do this on
   -- the "on_create" hook instead unfortunately doesn't seem to work
-  cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit",
+  cmd = cmd,
   dir = "git_dir",
   direction = "float",
   float_opts = {
