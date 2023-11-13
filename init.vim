@@ -123,10 +123,10 @@ let g:gutentags_ctags_exclude = [
       \'.svn',
       \'.hg',
       \'bundle',
-      \'node_modules'
       \'min',
       \'vendor',
       \'*.min.*,'
+      \'*.min,'
       \'*.map',
       \'*.swp',
       \'*.bak',
