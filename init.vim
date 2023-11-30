@@ -454,7 +454,6 @@ lua <<EOF
     "clangd",
     "intelephense",
     "psalm",
-  	"tsserver",
   	"pyright",
     "lua_ls",
   	"eslint",
@@ -470,7 +469,7 @@ lua <<EOF
     "tsserver",
     "prismals",
     "sqlls",
-    "ruby_ls",
+    "solargraph",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -573,9 +572,34 @@ lua <<EOF
   end
 
   require'lspconfig'.rust_analyzer.setup{}
-  require'lspconfig'.ruby_ls.setup{
-      cmd = { "bundle", "exec", "ruby-lsp" }
-  }
+
+
+  local function organize_imports()
+    local params = {
+      command = "_typescript.organizeImports",
+      arguments = {vim.api.nvim_buf_get_name(0)},
+      title = ""
+    }
+    vim.lsp.buf.execute_command(params)
+  end
+
+  require('lspconfig').tsserver.setup({
+    init_options = { 
+      preferences = { 
+        importModuleSpecifierPreference = 'relative', 
+        importModuleSpecifierEnding = 'auto', 
+      },  
+    },
+
+    commands = {
+     OrganizeImports = {
+       organize_imports,
+       description = "Organize Imports"
+     }
+    }
+  })
+  vim.cmd [[autocmd BufWritePre *.ts, *.tsx :OrganizeImports]]
+
 
   -- clangd is called by the below which follows a separate format
   -- than the servers above.
@@ -888,9 +912,9 @@ EOF
 lua<<EOF
 
 local cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit"
-if(vim.fn.has('win32')) then
-  cmd = "lazygit"
-end 
+-- if(vim.fn.has('win32')) then
+--   cmd = "lazygit"
+-- end 
 
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
