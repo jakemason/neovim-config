@@ -58,6 +58,9 @@ Plug 'preservim/nerdcommenter'
 " Allows quick importing of "use" statements in PHP
 Plug 'arnaud-lb/vim-php-namespace'
 
+
+Plug 'tpope/vim-rails'
+
 " Critical for easily moving between quickfix entries ]q, [q and more, etc 
 Plug 'tpope/vim-unimpaired'
 
@@ -573,6 +576,10 @@ lua <<EOF
 
   require'lspconfig'.rust_analyzer.setup{}
 
+  require('lspconfig').solargraph.setup {
+    cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
+  }
+
 
   local function organize_imports()
     local params = {
@@ -598,8 +605,8 @@ lua <<EOF
      }
     }
   })
-  vim.cmd [[autocmd BufWritePre *.ts, *.tsx :OrganizeImports]]
-
+  vim.cmd [[autocmd BufWritePre *.ts :OrganizeImports]]
+  vim.cmd [[autocmd BufWritePre *.tsx :OrganizeImports]]
 
   -- clangd is called by the below which follows a separate format
   -- than the servers above.
