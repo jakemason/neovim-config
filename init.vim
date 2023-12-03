@@ -576,10 +576,11 @@ lua <<EOF
 
   require'lspconfig'.rust_analyzer.setup{}
 
-  require('lspconfig').solargraph.setup {
+  require('lspconfig').solargraph.setup { 
+    on_attach = on_attach,
+  	capabilities = capabilities,
     cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
   }
-
 
   local function organize_imports()
     local params = {
@@ -848,7 +849,7 @@ require'nvim-treesitter.configs'.setup {
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = true,
+    -- additional_vim_regex_highlighting = true,
   },
 }
 
@@ -996,6 +997,7 @@ set clipboard^=unnamed,unnamedplus
 set showtabline=0
 set mouse=a
 set syntax=on
+au BufRead,BufNewFile *.prisma set filetype=prisma | syntax off
 
 
 " Security
