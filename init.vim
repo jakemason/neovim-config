@@ -47,6 +47,7 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
 Plug 'preservim/nerdtree'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 Plug 'windwp/nvim-autopairs'
 
@@ -469,7 +470,7 @@ lua <<EOF
   	"graphql",
     "gopls",
     "zls",
-    "tsserver",
+--    "tsserver",
     "prismals",
     "sqlls",
     "solargraph",
@@ -575,6 +576,12 @@ lua <<EOF
   end
 
   require'lspconfig'.rust_analyzer.setup{}
+  
+  require'lspconfig'.graphql.setup{
+    cmd = { "graphql-lsp", "server", "-m", "stream" },
+    filetypes = { "graphql", "typescriptreact", "javascriptreact" },
+    root_dir = require'lspconfig'.util.root_pattern('.git', '.graphqlrc*', '.graphql.config.*', 'graphql.config.*');
+  }
 
   require('lspconfig').solargraph.setup { 
     on_attach = on_attach,
@@ -592,6 +599,8 @@ lua <<EOF
   end
 
   require('lspconfig').tsserver.setup({
+  		on_attach = on_attach,
+  	capabilities = capabilities,
     init_options = { 
       preferences = { 
         importModuleSpecifierPreference = 'relative', 
@@ -606,8 +615,8 @@ lua <<EOF
      }
     }
   })
-  vim.cmd [[autocmd BufWritePre *.ts :OrganizeImports]]
-  vim.cmd [[autocmd BufWritePre *.tsx :OrganizeImports]]
+  vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
+  vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
 
   -- clangd is called by the below which follows a separate format
   -- than the servers above.
@@ -1112,6 +1121,7 @@ map <leader>o :silent !explorer.exe .<CR>
 let NERDTreeShowHidden=1
 " Toggle NERDTree, and open it at the current buffers folder to start
 map <leader><leader>x :NERDTreeFind %<CR>
+let g:NERDTreeNodeDelimiter = "\u00a0"
 
 " Color scheme (terminal)
 set termguicolors
