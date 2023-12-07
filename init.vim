@@ -1,5 +1,5 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
-"                   VIM-PLUG INSTALLS                 "
+"                   VIM-PLUG INSTALLS                 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " For plugins to load correctly
 filetype plugin indent on
@@ -8,7 +8,8 @@ call plug#begin()
 
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
-Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
+"Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
+Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf'
 Plug 'nvim-lualine/lualine.nvim'
@@ -615,8 +616,11 @@ lua <<EOF
      }
     }
   })
-  vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
-  vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
+  -- TODO -- Jake Mason | (12/06/23) 
+  -- I want to be running this, but Joe requested that I make sure eslint does it first
+  -- so that everyone has the same functionality.
+  --vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
+  --vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
 
   -- Prisma format on save
   vim.cmd [[autocmd BufWritePre *.prisma silent! lua vim.lsp.buf.format()]]
@@ -1126,6 +1130,14 @@ let NERDTreeShowHidden=1
 " Toggle NERDTree, and open it at the current buffers folder to start
 map <leader><leader>x :NERDTreeFind %<CR>
 let g:NERDTreeNodeDelimiter = "\u00a0"
+let g:NERDTreeFileExtensionHighlightFullName = 1
+let g:NERDTreeExactMatchHighlightFullName = 1
+let g:NERDTreePatternMatchHighlightFullName = 1
+autocmd FileType nerdtree syntax enable
+
+if exists('g:loaded_webdevicons')
+  call webdevicons#refresh()
+endif
 
 " Color scheme (terminal)
 set termguicolors
@@ -1134,6 +1146,7 @@ set t_Co=256
 set background=dark
 colorscheme kanagawa
 " colorscheme nord 
+
 
 " Infinite & persistent undo
 " Put plugins and dictionaries in this dir (also on Windows)
