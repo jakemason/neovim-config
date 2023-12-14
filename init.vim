@@ -988,6 +988,7 @@ local lazygit = Terminal:new({
 })
 
 function _lazygit_toggle()
+  lazygit.dir = vim.fn.getcwd()
   lazygit:toggle()
 end
 
