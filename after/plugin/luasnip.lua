@@ -19,11 +19,11 @@ vim.keymap.set({"i", "s" }, "<c-k>", function()
     end
 end, {silent = true })
 
-vim.keymap.set({"i", "s" }, "<c-enter>", function()
-    if ls.expand_or_jumpable() then
-        ls.expand_or_jump()
-    end
-end, {silent = true })
+-- vim.keymap.set({"i", "s" }, "<c-enter>", function()
+--     if ls.expand_or_jumpable() then
+--         ls.expand_or_jump()
+--     end
+-- end, {silent = true })
 
 -- THIS DOES NOT WORK AND MAKES LIFE MISERABLE :(
 -- vim.keymap.set({"i", "s" }, "<enter>", function()

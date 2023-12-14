@@ -6,6 +6,8 @@ filetype plugin indent on
 
 call plug#begin()
 
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' } " show css/scss colors in editor
+
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
 "Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
@@ -28,6 +30,7 @@ Plug 'jparise/vim-graphql'
 Plug 'f-person/git-blame.nvim'
 " Used for automatic documentation generation
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+Plug 'github/copilot.vim'
 
 " LSP support, autocompletion via nvim-cmp'
 
@@ -119,6 +122,7 @@ Plug 'cranberry-clockworks/coal.nvim'
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
+let g:Hexokinase_highlighters = ['virtual']
 let g:netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.twig'
@@ -150,6 +154,7 @@ let g:gutentags_ctags_exclude = [
 
 
 lua << EOF
+
 
 require('numb').setup()
 
@@ -210,6 +215,13 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua require('leap').add_default_mappings()
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                  COPILOT CONFIG                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua vim.g.copilot_assume_mapped = true
+"lua vim.api.nvim_set_keymap('i', '<C-/>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
+lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     PHP CONFIG                      "
@@ -576,6 +588,18 @@ lua <<EOF
   	})
   end
 
+  require("lspconfig").stylelint_lsp.setup({
+    filetypes = { "css", "scss" },
+    root_dir = require"lspconfig".util.root_pattern("package.json", ".git"),
+    settings = {
+      stylelintplus = {
+        autoFixOnSave = true
+        -- see available options in stylelint-lsp documentation
+      },
+    },
+    on_attach = on_attach
+  })
+
   require'lspconfig'.rust_analyzer.setup{}
   
   require'lspconfig'.graphql.setup{
@@ -619,8 +643,8 @@ lua <<EOF
   -- TODO -- Jake Mason | (12/06/23) 
   -- I want to be running this, but Joe requested that I make sure eslint does it first
   -- so that everyone has the same functionality.
-  --vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
-  --vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
+  vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
+  vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
 
   -- Prisma format on save
   vim.cmd [[autocmd BufWritePre *.prisma silent! lua vim.lsp.buf.format()]]
@@ -987,7 +1011,7 @@ set spell
 " Ignore case when searching for files with ctrlp, or in files themselves
 set ignorecase
 
-" Forces word wrapping to break on words, rather than on characters
+" Forces word wrapping to break on words, rather than on character
 set linebreak
 
 set cursorline
@@ -1022,8 +1046,6 @@ set modelines=0
 
 " turn hybrid line numbers on
 set number relativenumber
-
-" Show file stats
 set ruler
 
 " Blink cursor on error instead of beeping 
