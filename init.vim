@@ -13,7 +13,7 @@ Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
 "Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
 Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'kevinhwang91/nvim-bqf'
+Plug 'kevinhwang91/nvim-bqf' " Better quickfix window
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'rhysd/vim-clang-format'
@@ -23,7 +23,7 @@ Plug 'ziglang/zig.vim'
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
 Plug 'akinsho/toggleterm.nvim'
-Plug 'nacro90/numb.nvim'
+Plug 'nacro90/numb.nvim' " Preview where you'd go when entering :{number} such as :120
 Plug 'ThePrimeagen/harpoon'
 Plug 'prisma/vim-prisma'
 Plug 'jparise/vim-graphql'
@@ -34,18 +34,17 @@ Plug 'github/copilot.vim'
 
 " LSP support, autocompletion via nvim-cmp'
 
-" Plug 'williamboman/nvim-lsp-installer' " replaced by mason.nvim
 Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'p00f/clangd_extensions.nvim'
-Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
-Plug 'onsails/lspkind.nvim'
+Plug 'onsails/lspkind.nvim' " Pictograms for LSP completion items
 " Luasnip and cmp support for it
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
@@ -105,11 +104,10 @@ Plug 'cakebaker/scss-syntax.vim'
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'jakemason/project.nvim'
-" Plug 'ahmedkhalf/project.nvim'
+" Plug 'ahmedkhalf/project.nvim' " No longer maintained it seems, so my fork is better
+
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-" Plug 'rmagatti/auto-session'
-" Plug 'rmagatti/session-lens'
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -486,7 +484,7 @@ lua <<EOF
 --    "tsserver",
     "prismals",
     "sqlls",
-    "solargraph",
+--    "solargraph",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -588,6 +586,8 @@ lua <<EOF
   	})
   end
 
+  require'lspconfig'.ruby_ls.setup{}
+
   require("lspconfig").stylelint_lsp.setup({
     filetypes = { "css", "scss" },
     root_dir = require"lspconfig".util.root_pattern("package.json", ".git"),
@@ -608,16 +608,17 @@ lua <<EOF
     root_dir = require'lspconfig'.util.root_pattern('.git', '.graphqlrc*', '.graphql.config.*', 'graphql.config.*');
   }
 
-  require('lspconfig').solargraph.setup { 
-    on_attach = on_attach,
-  	capabilities = capabilities,
-    cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
-  }
+ -- require('lspconfig').solargraph.setup { 
+ --   on_attach = on_attach,
+ -- 	capabilities = capabilities,
+ --   cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
+ -- }
 
   local function organize_imports()
     local params = {
       command = "_typescript.organizeImports",
-      arguments = {vim.api.nvim_buf_get_name(0)},
+      -- arguments = {vim.api.nvim_buf_get_name(0)},
+      arguments = {vim.fn.expand("%:p")},
       title = ""
     }
     vim.lsp.buf.execute_command(params)
