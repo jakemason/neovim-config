@@ -586,7 +586,12 @@ lua <<EOF
   	})
   end
 
-  require'lspconfig'.ruby_ls.setup{}
+  require'lspconfig'.ruby_ls.setup{
+  		on_attach = on_attach,
+  		capabilities = capabilities,
+      settings = lsp_settings,
+      handlers = handlers
+  }
 
   require("lspconfig").stylelint_lsp.setup({
     filetypes = { "css", "scss" },
