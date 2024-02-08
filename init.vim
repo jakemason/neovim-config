@@ -484,7 +484,7 @@ lua <<EOF
 --    "tsserver",
     "prismals",
     "sqlls",
---    "solargraph",
+    "solargraph",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -588,7 +588,7 @@ lua <<EOF
 
   require'lspconfig'.ruby_ls.setup{
   		on_attach = on_attach,
-  		capabilities = capabilities,
+  	  capabilities = capabilities,
       settings = lsp_settings,
       handlers = handlers
   }
@@ -613,11 +613,11 @@ lua <<EOF
     root_dir = require'lspconfig'.util.root_pattern('.git', '.graphqlrc*', '.graphql.config.*', 'graphql.config.*');
   }
 
- -- require('lspconfig').solargraph.setup { 
- --   on_attach = on_attach,
- -- 	capabilities = capabilities,
- --   cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
- -- }
+  require('lspconfig').solargraph.setup { 
+    on_attach = on_attach,
+  	capabilities = capabilities,
+    cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
+  }
 
   local function organize_imports()
     local params = {
@@ -778,7 +778,13 @@ require("telescope").setup{
         }
     },
     extensions = {
-        fzf
+      fzf = {
+        fuzzy = true,                    -- false will only do exact matching
+        override_generic_sorter = true,  -- override the generic sorter
+        override_file_sorter = true,     -- override the file sorter
+        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+                                         -- the default case_mode is "smart_case"
+      }
     }
 }
 
@@ -825,6 +831,7 @@ require("project_nvim").setup {
 
 require('telescope').load_extension("projects")
 require("telescope").load_extension('harpoon')
+require("telescope").load_extension('fzf')
 
 
 
