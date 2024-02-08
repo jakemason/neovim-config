@@ -6,7 +6,9 @@ filetype plugin indent on
 
 call plug#begin()
 
-Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' } " show css/scss colors in editor
+if(!has('win32'))
+  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' } " show css/scss colors in editor
+endif
 
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
@@ -974,9 +976,11 @@ EOF
 lua<<EOF
 
 local cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit"
--- if(vim.fn.has('win32')) then
---   cmd = "lazygit"
--- end 
+
+-- We just run regular lazygit on windows, no need to look for an agent
+if(vim.fn.has('win32')) then
+  cmd = "lazygit"
+end 
 
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
