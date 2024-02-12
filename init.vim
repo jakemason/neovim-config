@@ -33,7 +33,7 @@ Plug 'f-person/git-blame.nvim'
 " Used for automatic documentation generation
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'github/copilot.vim'
-
+Plug 'vim-test/vim-test'
 " LSP support, autocompletion via nvim-cmp'
 
 Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
@@ -122,7 +122,16 @@ Plug 'cranberry-clockworks/coal.nvim'
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
-let g:Hexokinase_highlighters = ['virtual']
+
+nmap <silent> <leader>rt :TestNearest<CR>
+nmap <silent> <leader>rT :TestFile<CR>
+nmap <silent> <leader>ra :TestSuite<CR>
+nmap <silent> <leader>rl :TestLast<CR>
+nmap <silent> <leader>rg :TestVisit<CR>
+
+let test#strategy = "toggleterm"
+
+let g:Hexokinase_highlighters= ['virtual']
 let g:netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.twig'
@@ -978,9 +987,9 @@ lua<<EOF
 local cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit"
 
 -- We just run regular lazygit on windows, no need to look for an agent
-if(vim.fn.has('win32')) then
-  cmd = "lazygit"
-end 
+-- if(vim.fn.has('win32')) then
+--  cmd = "lazygit"
+-- end 
 
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
