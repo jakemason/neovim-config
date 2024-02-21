@@ -12,63 +12,71 @@ endif
 
 Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
-"Plug 'kyazdani42/nvim-web-devicons' " provides some nice dev icons for various other plugins
-Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons' " provides some nice dev icons for various other plugins
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'kevinhwang91/nvim-bqf' " Better quickfix window
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'lewis6991/gitsigns.nvim'
-Plug 'rhysd/vim-clang-format'
-Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
-Plug 'ziglang/zig.vim'
+Plug 'nvim-lualine/lualine.nvim' " Status line
+Plug 'lewis6991/gitsigns.nvim' " Git signs in the gutter
+Plug 'rhysd/vim-clang-format' " clang-format support
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+Plug 'ziglang/zig.vim' " Syntax highlighting for Zig
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
 Plug 'kdheepak/lazygit.nvim'
-Plug 'akinsho/toggleterm.nvim'
+Plug 'akinsho/toggleterm.nvim' " Open a terminal in a floating window
 Plug 'nacro90/numb.nvim' " Preview where you'd go when entering :{number} such as :120
 Plug 'ThePrimeagen/harpoon'
-Plug 'prisma/vim-prisma'
-Plug 'jparise/vim-graphql'
-Plug 'f-person/git-blame.nvim'
+Plug 'prisma/vim-prisma' " Syntax highlighting for Prisma
+Plug 'jparise/vim-graphql' " Syntax highlighting for GraphQL
+Plug 'f-person/git-blame.nvim' " Git blame in the gutter
 " Used for automatic documentation generation
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
-Plug 'github/copilot.vim'
-Plug 'vim-test/vim-test'
-" LSP support, autocompletion via nvim-cmp'
+Plug 'github/copilot.vim' " GitHub Copilot, really just for better autocompletion
+Plug 'vim-test/vim-test' " Run tests from within vim via :TestFile, etc
+nmap <silent> <leader>rt :TestNearest<CR>
+nmap <silent> <leader>rT :TestFile<CR>
+nmap <silent> <leader>ra :TestSuite<CR>
+nmap <silent> <leader>rl :TestLast<CR>
+nmap <silent> <leader>rg :TestVisit<CR>
 
-Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
-Plug 'williamboman/mason-lspconfig.nvim'
-Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
+" Allows me to use - / + to move "back and forth" through recent buffers
+" as one would in a web browser. I find this is the easiest way to flick
+" through recent buffers when digging into multiple files when trying to
+" track down a bug. I probably should be better with using marks, but this
+" works for me.
+Plug 'ton/vim-bufsurf'
+nmap = <Plug>(buf-surf-forward)
+nmap - <Plug>(buf-surf-back)
+
+" LSP support, autocompletion via nvim-cmp'
+Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' } " LSP installer
+Plug 'williamboman/mason-lspconfig.nvim' " LSP config for Mason
+Plug 'neovim/nvim-lspconfig' " LSP config for various languages
+Plug 'hrsh7th/nvim-cmp' " Autocompletion
+Plug 'hrsh7th/cmp-nvim-lsp' " LSP support for nvim-cmp
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'p00f/clangd_extensions.nvim'
+Plug 'p00f/clangd_extensions.nvim' " Provides extra functionality for clangd
 Plug 'onsails/lspkind.nvim' " Pictograms for LSP completion items
 " Luasnip and cmp support for it
-Plug 'L3MON4D3/LuaSnip'
+Plug 'L3MON4D3/LuaSnip' " Snippets support in Neovim
 Plug 'saadparwaiz1/cmp_luasnip'
 
-Plug 'preservim/nerdtree'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'preservim/nerdtree' " File explorer
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight' " Syntax highlighting for NERDTree
 
-Plug 'windwp/nvim-autopairs'
+Plug 'windwp/nvim-autopairs' 
 
-" Colorscheme
-Plug 'rebelot/kanagawa.nvim'
-" Easily comment out blocks of code at a time
-Plug 'preservim/nerdcommenter'
+Plug 'rebelot/kanagawa.nvim' " Colorscheme
+Plug 'preservim/nerdcommenter' " Easily comment out blocks of code at a time
 
-" Allows quick importing of "use" statements in PHP
-Plug 'arnaud-lb/vim-php-namespace'
+Plug 'arnaud-lb/vim-php-namespace' " Allows quick importing of 'use' statements in PHP
 
+Plug 'tpope/vim-rails' " Rails support
 
-Plug 'tpope/vim-rails'
-
-" Critical for easily moving between quickfix entries ]q, [q and more, etc 
-Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-unimpaired' " Critical for easily moving between quickfix entries ]q, [q and more, etc 
 
 " For quick commenting out of lines
 Plug 'tpope/vim-commentary'
@@ -76,7 +84,7 @@ Plug 'tpope/vim-commentary'
 " Allows respecting case during search / replace
 Plug 'tpope/vim-abolish'
 
-Plug 'tikhomirov/vim-glsl'
+Plug 'tikhomirov/vim-glsl' " GLSL syntax highlighting
 
 " automatically change matching tag in html
 Plug 'AndrewRadev/tagalong.vim'
@@ -106,8 +114,9 @@ Plug 'cakebaker/scss-syntax.vim'
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'jakemason/project.nvim'
-" Plug 'ahmedkhalf/project.nvim' " No longer maintained it seems, so my fork is better
+" NOTE -- Jake Mason | (~2023): Plug 'ahmedkhalf/project.nvim' " No longer maintained it seems, so my fork is better
 
+" Telescope, searching projects, fzf for speed, and session management
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'tpope/vim-obsession'
@@ -123,11 +132,6 @@ Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
 
-nmap <silent> <leader>rt :TestNearest<CR>
-nmap <silent> <leader>rT :TestFile<CR>
-nmap <silent> <leader>ra :TestSuite<CR>
-nmap <silent> <leader>rl :TestLast<CR>
-nmap <silent> <leader>rg :TestVisit<CR>
 
 let test#strategy = "toggleterm"
 
