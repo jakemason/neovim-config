@@ -1,2 +1,0 @@
-= Projects =
-* [[Projects/Athena|Athena - Custom game(-engine) in C++]]
