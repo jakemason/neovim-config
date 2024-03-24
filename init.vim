@@ -118,7 +118,7 @@ Plug 'jakemason/project.nvim'
 
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -166,13 +166,13 @@ let g:gutentags_ctags_exclude = [
       \'*.tar.*,']
 
 
-lua << EOF
+lua<<EOF
 
 
 require('numb').setup()
 
 -- On Mac we use whatever the default shell is, on Windows we need to specify powershell
-if (vim.fn.has('macunix')) then
+if (vim.fn.has('macunix') == 1) then
   require("toggleterm").setup()
 else 
   require("toggleterm").setup{ shell = 'powershell' }
@@ -290,7 +290,7 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 set completeopt=menu,menuone,noselect
 
-lua <<EOF
+lua<<EOF
   -- Diagnostic keymaps
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -695,12 +695,13 @@ lua <<EOF
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
-EOF
+  EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                RUST TOOLS CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua << EOF
+lua<<EOF
+
 local rt = require("rust-tools")
 
 rt.setup({
@@ -745,7 +746,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   GITSIGNS CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua << EOF
+lua<<EOF
 require('gitsigns').setup();
 EOF
 
@@ -753,7 +754,7 @@ EOF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                   TELESCOPE CONFIG                  "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua << EOF
+lua<<EOF
 local previewers = require("telescope.previewers")
 local new_maker = function(filepath, bufnr, opts)
  opts = opts or {}
@@ -902,7 +903,7 @@ nnoremap <leader>fm <cmd>Telescope harpoon marks<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  TREESITTER CONFIG                  "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua << EOF
+lua<<EOF
 
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -935,7 +936,7 @@ set laststatus=2
 
 set statusline+=%#warningmsg#
 set statusline+=%*
-lua << EOF
+lua<<EOF
 local git_blame = require('gitblame')
 require('lualine').setup {
   options = {
@@ -991,9 +992,9 @@ lua<<EOF
 local cmd = "eval `keychain --eval --agents ssh id_rsa 2>/dev/null` && lazygit"
 
 -- We just run regular lazygit on windows, no need to look for an agent
--- if(vim.fn.has('win32')) then
---  cmd = "lazygit"
--- end 
+if ((vim.fn.has('win32') == 1) and (vim.fn.has('unix') == 0)) then
+ cmd = "lazygit"
+end 
 
 local Terminal  = require('toggleterm.terminal').Terminal
 local lazygit = Terminal:new({
