@@ -628,10 +628,12 @@ lua<<EOF
     root_dir = require'lspconfig'.util.root_pattern('.git', '.graphqlrc*', '.graphql.config.*', 'graphql.config.*');
   }
 
+
+  local home = os.getenv("HOME") or os.getenv("USERPROFILE")
   require('lspconfig').solargraph.setup { 
     on_attach = on_attach,
   	capabilities = capabilities,
-    cmd = { os.getenv( "HOME" ) .. "/.rbenv/shims/solargraph", 'stdio' },
+    cmd = { home .. "/.rbenv/shims/solargraph", 'stdio' },
   }
 
   local function organize_imports()
