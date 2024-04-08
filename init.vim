@@ -172,7 +172,7 @@ lua<<EOF
 require('numb').setup()
 
 -- On Mac we use whatever the default shell is, on Windows we need to specify powershell
-if (vim.fn.has('macunix') == 1) then
+if (vim.fn.has('macunix') == 1 or vim.fn.has('wsl') == 1) then
   require("toggleterm").setup()
 else 
   require("toggleterm").setup{ shell = 'powershell' }
