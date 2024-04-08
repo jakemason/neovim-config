@@ -882,9 +882,6 @@ end, opts)
 
 EOF
 
-
-
-
 " Find files using Telescope command-line sugar.
 " nnoremap <c-f> <cmd>Telescope find_files<cr>
 " nnoremap <leader>ff <cmd>Telescope find_files<cr>
@@ -1375,9 +1372,6 @@ let g:clang_format#detect_style_file = 1
 
 autocmd FileType c ClangFormatAutoEnable
 autocmd FileType cpp ClangFormatAutoEnable
-
-
-
 
 lua<<EOF
 
