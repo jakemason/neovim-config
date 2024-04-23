@@ -1320,7 +1320,7 @@ inoremap <C-ScrollWheelUp> <Esc>:call AdjustFontSize(1)<CR>a
 inoremap <C-ScrollWheelDown> <Esc>:call AdjustFontSize(-1)<CR>a
 
 " Visual Mode <C-r> does a search and replace of everything under the cursor
-vnoremap <C-r> "hy:%s/<C-r>h//g<left><left>
+vnoremap <C-r> "hy:%s#<C-r>h##g<left><left>
 
 " Hides the command bar while not in use -- praise be to Neovim
 "set cmdheight=0 " bleh, currently can't see macro recording state with this at 0 :(
