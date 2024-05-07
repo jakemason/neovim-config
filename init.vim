@@ -1210,6 +1210,7 @@ set background=dark
 colorscheme phoenix
 hi Identifier                 guifg=#40BDFF guibg=NONE    gui=NONE      ctermfg=246
 let g:phoenix_invert_match_paren = 1
+PhoenixPurple
 " colorscheme kanagawa
 " colorscheme nord 
 
