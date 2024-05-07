@@ -127,6 +127,12 @@ Plug 'jakemason/ouroboros.nvim'
 " colorscheme experiments
 Plug 'arcticicestudio/nord-vim'
 Plug 'cranberry-clockworks/coal.nvim'
+Plug 'lurst/austere.vim'
+Plug 'fxn/vim-monochrome'
+Plug 'n1ghtmare/noirblaze-vim'
+Plug 'widatama/vim-phoenix'
+
+
 
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
@@ -1197,7 +1203,10 @@ set termguicolors
 set t_Co=256
 
 set background=dark
-colorscheme kanagawa
+colorscheme phoenix
+hi Identifier                 guifg=#40BDFF guibg=NONE    gui=NONE      ctermfg=246
+let g:phoenix_invert_match_paren = 1
+" colorscheme kanagawa
 " colorscheme nord 
 
 
