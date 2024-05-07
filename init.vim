@@ -33,11 +33,16 @@ Plug 'f-person/git-blame.nvim' " Git blame in the gutter
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'github/copilot.vim' " GitHub Copilot, really just for better autocompletion
 Plug 'vim-test/vim-test' " Run tests from within vim via :TestFile, etc
+
+
+
 nmap <silent> <leader>rt :TestNearest<CR>
 nmap <silent> <leader>rT :TestFile<CR>
 nmap <silent> <leader>ra :TestSuite<CR>
 nmap <silent> <leader>rl :TestLast<CR>
 nmap <silent> <leader>rg :TestVisit<CR>
+
+
 
 " Allows me to use - / + to move "back and forth" through recent buffers
 " as one would in a web browser. I find this is the easiest way to flick
@@ -137,9 +142,8 @@ Plug 'widatama/vim-phoenix'
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
 
-
-
 let test#strategy = "toggleterm"
+let test#custom_runners = {'Yarn': ['Yarn']}
 
 let g:Hexokinase_highlighters= ['virtual']
 let g:netrw_bufsettings = 'noma nomod nu nowrap ro nobl'
@@ -505,7 +509,7 @@ lua<<EOF
 --    "tsserver",
     "prismals",
     "sqlls",
-    "solargraph",
+--    "solargraph",
     "vuels",
 --  	"tailwindcss",
 --    "vimls"
@@ -607,7 +611,7 @@ lua<<EOF
   	})
   end
 
-  require'lspconfig'.ruby_ls.setup{
+  require'lspconfig'.ruby_lsp.setup{
   		on_attach = on_attach,
   	  capabilities = capabilities,
       settings = lsp_settings,
@@ -636,11 +640,11 @@ lua<<EOF
 
 
   local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-  require('lspconfig').solargraph.setup { 
-    on_attach = on_attach,
-  	capabilities = capabilities,
-    cmd = { home .. "/.rbenv/shims/solargraph", 'stdio' },
-  }
+  -- require('lspconfig').solargraph.setup { 
+  --   on_attach = on_attach,
+  --   capabilities = capabilities,
+  --   cmd = { home .. "/.rbenv/shims/solargraph", 'stdio' },
+  -- }
 
   local function organize_imports()
     local params = {
@@ -1420,3 +1424,9 @@ augroup AlphabetizeOnSave
  autocmd!
  autocmd BufWritePre * :lua faster_alphabetize_selection()
 augroup END
+
+function! OopsAllBoxes()
+  let command = 'set guifont=OopsAllBoxes'
+  :execute command
+  set nospell
+endfunction
