@@ -34,6 +34,8 @@ Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'github/copilot.vim' " GitHub Copilot, really just for better autocompletion
 Plug 'vim-test/vim-test' " Run tests from within vim via :TestFile, etc
 
+Plug 'rktjmp/lush.nvim'
+
 
 
 nmap <silent> <leader>rt :TestNearest<CR>
@@ -495,7 +497,7 @@ lua<<EOF
     "intelephense",
     "psalm",
   	"pyright",
-    "lua_ls",
+--    "lua_ls",
   	"eslint",
   	"bashls",
     "emmet_ls",
@@ -1208,10 +1210,10 @@ set t_Co=256
 
 set background=dark
 colorscheme phoenix
-hi Identifier                 guifg=#40BDFF guibg=NONE    gui=NONE      ctermfg=246
-let g:phoenix_invert_match_paren = 1
-PhoenixPurple
-" colorscheme kanagawa
+"let g:phoenix_invert_match_paren = 1
+"PhoenixPurple
+"hi Identifier                 guifg=#d1afdd guibg=NONE    gui=NONE      ctermfg=246
+colorscheme kanagawa
 " colorscheme nord 
 
 
