@@ -37,7 +37,6 @@ Plug 'vim-test/vim-test' " Run tests from within vim via :TestFile, etc
 Plug 'rktjmp/lush.nvim'
 
 
-
 nmap <silent> <leader>rt :TestNearest<CR>
 nmap <silent> <leader>rT :TestFile<CR>
 nmap <silent> <leader>ra :TestSuite<CR>
@@ -45,6 +44,8 @@ nmap <silent> <leader>rl :TestLast<CR>
 nmap <silent> <leader>rg :TestVisit<CR>
 
 
+Plug 'kkharji/sqlite.lua'
+Plug 'nvim-telescope/telescope-smart-history.nvim'
 
 " Allows me to use - / + to move "back and forth" through recent buffers
 " as one would in a web browser. I find this is the easiest way to flick
@@ -105,15 +106,15 @@ Plug 'alvan/vim-closetag' " This bugs me so much during C/C++ work
 " PHP formatting
 Plug 'stephpy/vim-php-cs-fixer'
 
-Plug 'sbdchd/neoformat'
+"Plug 'sbdchd/neoformat'
 
 " Prettier formatting
 " Requires some global npm installs:
 " npm install -g prettier
 " npm install -g prettier-plugin-twig-melody
-" Plug 'prettier/vim-prettier', {
-"   \ 'do': 'yarn install --frozen-lockfile --production',
-"   \ 'for': ['html.twig', 'twig', 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
+Plug 'prettier/vim-prettier', {
+   \ 'do': 'yarn install --frozen-lockfile --production',
+   \ 'for': ['html.twig', 'twig', 'javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
 
 " Syntax support for css/scss
 Plug 'JulesWang/css.vim' 
@@ -206,19 +207,19 @@ map <leader>t :ToggleTerm direction=float<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  NEOFORMAT CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-augroup fmt
-  autocmd!
-  autocmd BufWritePre * silent! undojoin | Neoformat
-augroup END
+"augroup fmt
+"  autocmd!
+"  autocmd BufWritePre * silent! undojoin | Neoformat
+"augroup END
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  PRETTIER CONFIG                    "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let g:prettier#autoformat = 1 " format on save
+let g:prettier#autoformat = 1 " format on save
 
 "" autosave even on files that don't start with @format
-"let g:prettier#autoformat_require_pragma = 0 
+let g:prettier#autoformat_require_pragma = 0 
 
 "command! -nargs=1 Silent
 "\   execute 'silent !' . <q-args>
@@ -482,7 +483,10 @@ lua<<EOF
     vim.keymap.set('n', '<leader>df', vim.lsp.buf.code_action, bufopts) -- diagnostic fix
     vim.keymap.set({"n", "v"}, "K", vim.lsp.buf.hover, { buffer = 0 }) -- show documentation
     -- autoformat any buffer running an LSP
-    -- vim.api.nvim_command[[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+    if client.supports_method("textDocument/formatting") then
+      vim.api.nvim_command[[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+    end
+
   end
 
 
@@ -805,6 +809,16 @@ require("telescope").setup{
             "%.a$",
             "%.lib",
             "%.la"
+        },
+        mappings = {
+            i = {
+              ["<C-Down>"] = require('telescope.actions').cycle_history_next,
+              ["<C-Up>"] = require('telescope.actions').cycle_history_prev,
+            },
+        },
+        history = {
+          path = '~/.local/share/nvim/databases/telescope_history.sqlite3',
+          limit = 100,
         }
     },
     extensions = {
@@ -862,6 +876,7 @@ require("project_nvim").setup {
 require('telescope').load_extension("projects")
 require("telescope").load_extension('harpoon')
 require("telescope").load_extension('fzf')
+require('telescope').load_extension('smart_history')
 
 
 
