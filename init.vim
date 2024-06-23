@@ -46,6 +46,14 @@ nmap <silent> <leader>rg :TestVisit<CR>
 
 Plug 'kkharji/sqlite.lua'
 Plug 'nvim-telescope/telescope-smart-history.nvim'
+" Check if the directory exists and create it if it doesn't
+" This is REQUIRED to exist in telescope-smart-history
+if !isdirectory($HOME . '/.local/share/nvim/databases/')
+  call mkdir($HOME . '/.local/share/nvim/databases/', 'p')
+endif
+if(has('win32'))
+  let g:sqlite_clib_path = "E:\/Tools\/sqlite\/sqlite3.dll"
+endif
 
 " Allows me to use - / + to move "back and forth" through recent buffers
 " as one would in a web browser. I find this is the easiest way to flick
@@ -106,7 +114,7 @@ Plug 'alvan/vim-closetag' " This bugs me so much during C/C++ work
 " PHP formatting
 Plug 'stephpy/vim-php-cs-fixer'
 
-"Plug 'sbdchd/neoformat'
+Plug 'sbdchd/neoformat'
 
 " Prettier formatting
 " Requires some global npm installs:
@@ -207,33 +215,11 @@ map <leader>t :ToggleTerm direction=float<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                  NEOFORMAT CONFIG                   "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-"augroup fmt
-"  autocmd!
-"  autocmd BufWritePre * silent! undojoin | Neoformat
-"augroup END
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                  PRETTIER CONFIG                    "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:prettier#autoformat = 1 " format on save
-
-"" autosave even on files that don't start with @format
-let g:prettier#autoformat_require_pragma = 0 
-
-"command! -nargs=1 Silent
-"\   execute 'silent !' . <q-args>
-"\ | execute 'redraw!'
-
-"" So .twig doesn't do autosaving through vim very well. It can be done,
-"" but every time you run it the cursor position is reset. I tried doing
-"" some sort of getpos / setpos sequence but something with the fact that
-"" the file/buffer reloads breaks that sequence. Thus, I just manually save
-"" these via this command.
-""
-"" TODO: Maybe it's worth running this on something like BufLeave rather than
-"" on write?
-"map <leader><leader>p :silent! %!prettier --stdin-filepath %<CR>
+augroup fmt
+  autocmd!
+  autocmd BufWritePre * silent! undojoin | Neoformat
+augroup END
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -644,6 +630,20 @@ lua<<EOF
     root_dir = require'lspconfig'.util.root_pattern('.git', '.graphqlrc*', '.graphql.config.*', 'graphql.config.*');
   }
 
+
+  require'lspconfig'.twiggy_language_server.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        twiggy = {
+            -- before 0.8.0:
+            -- phpBinConsoleCommand = 'php bin/console',
+            framework = 'symfony',
+            phpExecutable = '/usr/bin/php',
+            symfonyConsolePath = 'bin/console',
+        },
+    },
+}
 
   local home = os.getenv("HOME") or os.getenv("USERPROFILE")
   -- require('lspconfig').solargraph.setup { 
