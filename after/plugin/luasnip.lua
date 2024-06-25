@@ -40,6 +40,12 @@ vim.keymap.set({"i", "s" }, "<s-enter>", function()
         ls.expand_or_jump()
     end
 end, {silent = true })
+
+vim.keymap.set({"i", "s" }, "<c-enter>", function()
+    if ls.expand_or_jumpable() then
+        ls.expand_or_jump()
+    end
+end, {silent = true })
 --
 --
 --           GRAMMAR
@@ -157,7 +163,7 @@ local twig_snips = {
   )),
 
   snippet("__", fmta(
-  "{{ __('<>', '<>') }}\n<>", {i(1), i(2), i(0)}
+  "{{ __('<>', 'e4') }}\n<>", {i(1), i(0)}
   )),
 
   snippet("{", fmta(
