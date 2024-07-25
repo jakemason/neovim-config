@@ -34,9 +34,6 @@ Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'github/copilot.vim' " GitHub Copilot, really just for better autocompletion
 Plug 'vim-test/vim-test' " Run tests from within vim via :TestFile, etc
 
-Plug 'rktjmp/lush.nvim'
-
-
 nmap <silent> <leader>rt :TestNearest<CR>
 nmap <silent> <leader>rT :TestFile<CR>
 nmap <silent> <leader>ra :TestSuite<CR>
@@ -103,7 +100,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tikhomirov/vim-glsl' " GLSL syntax highlighting
 
 " automatically change matching tag in html
-Plug 'AndrewRadev/tagalong.vim'
+" Plug 'AndrewRadev/tagalong.vim'
 
 " jump to where you want to go quickly
 Plug 'ggandor/leap.nvim'
@@ -137,18 +134,10 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 Plug 'tpope/vim-obsession'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'jakemason/ouroboros.nvim'
 
 " colorscheme experiments
 Plug 'arcticicestudio/nord-vim'
-Plug 'cranberry-clockworks/coal.nvim'
-Plug 'lurst/austere.vim'
-Plug 'fxn/vim-monochrome'
-Plug 'n1ghtmare/noirblaze-vim'
-Plug 'widatama/vim-phoenix'
-
-
 
 Plug 'simrat39/rust-tools.nvim'
 call plug#end()
@@ -1224,10 +1213,6 @@ set termguicolors
 set t_Co=256
 
 set background=dark
-colorscheme phoenix
-"let g:phoenix_invert_match_paren = 1
-"PhoenixPurple
-"hi Identifier                 guifg=#d1afdd guibg=NONE    gui=NONE      ctermfg=246
 colorscheme kanagawa
 " colorscheme nord 
 

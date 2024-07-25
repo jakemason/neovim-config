@@ -233,7 +233,8 @@ local all_snips = {
 }
 
 local opts = {}
-opts['override_priority'] = 1001; -- default is 1000 and we always want our custom ones first
+local default_priority = 1000;
+opts['override_priority'] = default_priority + 1; -- default is 1000 and we always want our custom ones first
 ls.add_snippets("all", all_snips, opts)
 ls.add_snippets("css", css_snips, opts)
 ls.add_snippets("scss", css_snips, opts)
