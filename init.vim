@@ -125,6 +125,9 @@ Plug 'prettier/vim-prettier', {
 Plug 'JulesWang/css.vim' 
 Plug 'cakebaker/scss-syntax.vim'
 
+Plug 'aserebryakov/vim-todo-lists'
+let g:VimTodoListsDatesEnabled = 1
+let g:VimTodoListsDatesFormat = "%d %b, %Y"
 " Telescope, searching projects, fzf for speed, and session management
 Plug 'jakemason/project.nvim'
 " NOTE -- Jake Mason | (~2023): Plug 'ahmedkhalf/project.nvim' " No longer maintained it seems, so my fork is better
@@ -177,7 +180,6 @@ let g:gutentags_ctags_exclude = [
 
 
 lua<<EOF
-
 
 require('numb').setup()
 
@@ -1110,6 +1112,9 @@ set shiftwidth=2
 set softtabstop=2
 set expandtab
 set noshiftround
+
+" Disable wrapping for todo files
+autocmd FileType todo setlocal textwidth=0
 
 "Column width
 set textwidth=100
