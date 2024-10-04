@@ -494,6 +494,7 @@ lua<<EOF
     "sqlls",
 --    "solargraph",
     "vuels",
+    "ts_ls",
 --  	"tailwindcss",
 --    "vimls"
   }
@@ -653,23 +654,6 @@ lua<<EOF
     vim.lsp.buf.execute_command(params)
   end
 
-  require('lspconfig').tsserver.setup({
-  		on_attach = on_attach,
-  	capabilities = capabilities,
-    init_options = { 
-      preferences = { 
-        importModuleSpecifierPreference = 'relative', 
-        importModuleSpecifierEnding = 'auto', 
-      },  
-    },
-
-    commands = {
-     OrganizeImports = {
-       organize_imports,
-       description = "Organize Imports"
-     }
-    }
-  })
   -- TODO -- Jake Mason | (12/06/23) 
   -- I want to be running this, but Joe requested that I make sure eslint does it first
   -- so that everyone has the same functionality.
@@ -1099,6 +1083,7 @@ set ruler
 
 " Blink cursor on error instead of beeping 
 set visualbell
+set belloff=all
 
 " Encoding
 set encoding=utf-8
