@@ -14,6 +14,7 @@ Plug 'nvim-lua/plenary.nvim' " required by a ton of stuff - just dev utils
 Plug 'jackguo380/vim-lsp-cxx-highlight' " better cxx highlights
 Plug 'ryanoasis/vim-devicons' " provides some nice dev icons for various other plugins
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 Plug 'kevinhwang91/nvim-bqf' " Better quickfix window
 Plug 'nvim-lualine/lualine.nvim' " Status line
 Plug 'lewis6991/gitsigns.nvim' " Git signs in the gutter
@@ -22,6 +23,15 @@ Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'ziglang/zig.vim' " Syntax highlighting for Zig
 " an amazing in-editor git interface - seriously, first time that I've ever preferred
 " something over just doing everything via the command line myself.
+
+
+" Debugger
+Plug 'mfussenegger/nvim-dap'
+Plug 'mfussenegger/nvim-dap'
+Plug 'nvim-neotest/nvim-nio'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'mxsdev/nvim-dap-vscode-js'
+
 Plug 'kdheepak/lazygit.nvim'
 Plug 'akinsho/toggleterm.nvim' " Open a terminal in a floating window
 Plug 'nacro90/numb.nvim' " Preview where you'd go when entering :{number} such as :120
@@ -39,7 +49,6 @@ nmap <silent> <leader>rT :TestFile<CR>
 nmap <silent> <leader>ra :TestSuite<CR>
 nmap <silent> <leader>rl :TestLast<CR>
 nmap <silent> <leader>rg :TestVisit<CR>
-
 
 Plug 'kkharji/sqlite.lua'
 Plug 'nvim-telescope/telescope-smart-history.nvim'
@@ -143,7 +152,94 @@ Plug 'jakemason/ouroboros.nvim'
 Plug 'arcticicestudio/nord-vim'
 
 Plug 'simrat39/rust-tools.nvim'
+
+
+
 call plug#end()
+
+lua<<EOF
+
+local dap = require('dap')
+
+local dapui = require('dapui')
+
+-- Automatically open DAP UI when debugging starts
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+
+-- Automatically close DAP UI when debugging stops
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
+
+-- Map F5 to reload and start debugging
+vim.keymap.set('n', '<F5>', function()
+  dap.continue()        -- Start or continue debugging
+end, { desc = 'Start debugging' })
+
+-- Map additional keys for debugging controls (optional)
+vim.keymap.set('n', '<F10>', function()
+  dap.step_over()
+end, { desc = 'Step over' })
+vim.keymap.set('n', '<F11>', function()
+  dap.step_into()
+end, { desc = 'Step into' })
+vim.keymap.set('n', '<F12>', function()
+  dap.step_out()
+end, { desc = 'Step out' })
+vim.keymap.set('n', '<Leader>db', function()
+  dap.toggle_breakpoint()
+end, { desc = 'Toggle breakpoint' })
+
+require("dap-vscode-js").setup({
+ -- node_path = os.getenv('HOME') .. '/.nvm/versions/node/v18.2.0/bin/node',
+  debugger_path = os.getenv('HOME') .. '/debuggers/vscode-js-debug/',
+  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+})
+
+for _, language in ipairs({ "typescript", "javascript" }) do
+  dap.configurations[language] = {
+   {
+    type = "pwa-node",
+    request = "launch",
+    name = "Launch file",
+    program = "${file}",
+    cwd = "${workspaceFolder}",
+    sourceMaps = true,
+    skipFiles = { "<node_internals>/**", "node_modules/**" },
+  },
+      {
+        name = "Launch Yarn",
+        type = "pwa-node",
+        request = "launch",
+        cwd = "${workspaceFolder}",
+        runtimeExecutable = "yarn", -- Specify npm as the runtime executable
+        args = { "run", "dev" }, -- Pass the run command and script name as arguments
+        sourceMaps = true,
+        protocol = "inspector",
+        console = "integratedTerminal",
+        outFiles = { "${workspaceFolder}/dist/**/*.js" },
+        skipFiles = {
+          "${workspaceFolder}/node_modules/**/*.js",
+          "<node_internals>/**",
+        },
+      },
+  {
+    type = "pwa-node",
+    request = "attach",
+    name = "Attach",
+    processId = require'dap.utils'.pick_process,
+    cwd = "${workspaceFolder}",
+  }}
+end
+
+dapui.setup()
+
+EOF
 
 let test#strategy = "toggleterm"
 let test#custom_runners = {'Yarn': ['Yarn']}
@@ -219,12 +315,7 @@ augroup END
 lua require('leap').add_default_mappings()
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                  COPILOT CONFIG                     "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
-lua vim.g.copilot_assume_mapped = true
-"lua vim.api.nvim_set_keymap('i', '<C-/>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
-lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                     PHP CONFIG                      "
@@ -654,6 +745,12 @@ lua<<EOF
     vim.lsp.buf.execute_command(params)
   end
 
+  require('lspconfig').prismals.setup{
+    cmd = { "/home/jake/.nvm/versions/node/v21.3.0/bin/prisma-language-server", "--stdio" },
+    on_attach = on_attach,
+    capabilities = capabilities
+  }
+
   -- TODO -- Jake Mason | (12/06/23) 
   -- I want to be running this, but Joe requested that I make sure eslint does it first
   -- so that everyone has the same functionality.
@@ -907,6 +1004,11 @@ nnoremap <leader>fm <cmd>Telescope harpoon marks<cr>
 lua<<EOF
 
 require'nvim-treesitter.configs'.setup {
+  playground = {
+    enable = true,
+    updatetime = 25, -- Debounced time for highlighting nodes
+    persist_queries = false, -- Whether the query persists across vim sessions
+  },
   highlight = {
     enable = true,
     disable = function(lang, buf)
@@ -1423,3 +1525,19 @@ function! OopsAllBoxes()
   :execute command
   set nospell
 endfunction
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                  COPILOT CONFIG                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua vim.g.copilot_assume_mapped = true
+"lua vim.api.nvim_set_keymap('i', '<C-/>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
+lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr = true, silent = true, noremap = true})
+lua<<EOF
+vim.cmd([[
+  augroup copilot_keymap
+    autocmd!
+    autocmd VimEnter * lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr = true, silent = true, noremap = true})
+  augroup END
+]])
+EOF
