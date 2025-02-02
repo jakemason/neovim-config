@@ -58,7 +58,12 @@ if !isdirectory($HOME . '/.local/share/nvim/databases/')
   call mkdir($HOME . '/.local/share/nvim/databases/', 'p')
 endif
 if(has('win32'))
-  let g:sqlite_clib_path = "E:\/Tools\/sqlite\/sqlite3.dll"
+  let s:sqlite_path = "D:\/Tools\/sqlite\/sqlite3.dll"
+  if filereadable(s:sqlite_path)
+    let g:sqlite_clib_path = s:sqlite_path
+  else
+    echo "sqlite3.dll not found at " . s:sqlite_path
+  endif
 endif
 
 " Allows me to use - / + to move "back and forth" through recent buffers
@@ -157,89 +162,89 @@ Plug 'simrat39/rust-tools.nvim'
 
 call plug#end()
 
-lua<<EOF
+"lua<<EOF
 
-local dap = require('dap')
+"local dap = require('dap')
 
-local dapui = require('dapui')
+"local dapui = require('dapui')
 
--- Automatically open DAP UI when debugging starts
-dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
-end
+"-- Automatically open DAP UI when debugging starts
+"dap.listeners.after.event_initialized["dapui_config"] = function()
+"  dapui.open()
+"end
 
--- Automatically close DAP UI when debugging stops
-dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
-end
-dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
-end
+"-- Automatically close DAP UI when debugging stops
+"dap.listeners.before.event_terminated["dapui_config"] = function()
+"  dapui.close()
+"end
+"dap.listeners.before.event_exited["dapui_config"] = function()
+"  dapui.close()
+"end
 
--- Map F5 to reload and start debugging
-vim.keymap.set('n', '<F5>', function()
-  dap.continue()        -- Start or continue debugging
-end, { desc = 'Start debugging' })
+"-- Map F5 to reload and start debugging
+"vim.keymap.set('n', '<F5>', function()
+"  dap.continue()        -- Start or continue debugging
+"end, { desc = 'Start debugging' })
 
--- Map additional keys for debugging controls (optional)
-vim.keymap.set('n', '<F10>', function()
-  dap.step_over()
-end, { desc = 'Step over' })
-vim.keymap.set('n', '<F11>', function()
-  dap.step_into()
-end, { desc = 'Step into' })
-vim.keymap.set('n', '<F12>', function()
-  dap.step_out()
-end, { desc = 'Step out' })
-vim.keymap.set('n', '<Leader>db', function()
-  dap.toggle_breakpoint()
-end, { desc = 'Toggle breakpoint' })
+"-- Map additional keys for debugging controls (optional)
+"vim.keymap.set('n', '<F10>', function()
+"  dap.step_over()
+"end, { desc = 'Step over' })
+"vim.keymap.set('n', '<F11>', function()
+"  dap.step_into()
+"end, { desc = 'Step into' })
+"vim.keymap.set('n', '<F12>', function()
+"  dap.step_out()
+"end, { desc = 'Step out' })
+"vim.keymap.set('n', '<Leader>db', function()
+"  dap.toggle_breakpoint()
+"end, { desc = 'Toggle breakpoint' })
 
-require("dap-vscode-js").setup({
- -- node_path = os.getenv('HOME') .. '/.nvm/versions/node/v18.2.0/bin/node',
-  debugger_path = os.getenv('HOME') .. '/debuggers/vscode-js-debug/',
-  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
-})
+"require("dap-vscode-js").setup({
+" -- node_path = os.getenv('HOME') .. '/.nvm/versions/node/v18.2.0/bin/node',
+"  debugger_path = os.getenv('HOME') .. '/debuggers/vscode-js-debug/',
+"  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+"})
 
-for _, language in ipairs({ "typescript", "javascript" }) do
-  dap.configurations[language] = {
-   {
-    type = "pwa-node",
-    request = "launch",
-    name = "Launch file",
-    program = "${file}",
-    cwd = "${workspaceFolder}",
-    sourceMaps = true,
-    skipFiles = { "<node_internals>/**", "node_modules/**" },
-  },
-      {
-        name = "Launch Yarn",
-        type = "pwa-node",
-        request = "launch",
-        cwd = "${workspaceFolder}",
-        runtimeExecutable = "yarn", -- Specify npm as the runtime executable
-        args = { "run", "dev" }, -- Pass the run command and script name as arguments
-        sourceMaps = true,
-        protocol = "inspector",
-        console = "integratedTerminal",
-        outFiles = { "${workspaceFolder}/dist/**/*.js" },
-        skipFiles = {
-          "${workspaceFolder}/node_modules/**/*.js",
-          "<node_internals>/**",
-        },
-      },
-  {
-    type = "pwa-node",
-    request = "attach",
-    name = "Attach",
-    processId = require'dap.utils'.pick_process,
-    cwd = "${workspaceFolder}",
-  }}
-end
+"for _, language in ipairs({ "typescript", "javascript" }) do
+"  dap.configurations[language] = {
+"   {
+"    type = "pwa-node",
+"    request = "launch",
+"    name = "Launch file",
+"    program = "${file}",
+"    cwd = "${workspaceFolder}",
+"    sourceMaps = true,
+"    skipFiles = { "<node_internals>/**", "node_modules/**" },
+"  },
+"      {
+"        name = "Launch Yarn",
+"        type = "pwa-node",
+"        request = "launch",
+"        cwd = "${workspaceFolder}",
+"        runtimeExecutable = "yarn", -- Specify npm as the runtime executable
+"        args = { "run", "dev" }, -- Pass the run command and script name as arguments
+"        sourceMaps = true,
+"        protocol = "inspector",
+"        console = "integratedTerminal",
+"        outFiles = { "${workspaceFolder}/dist/**/*.js" },
+"        skipFiles = {
+"          "${workspaceFolder}/node_modules/**/*.js",
+"          "<node_internals>/**",
+"        },
+"      },
+"  {
+"    type = "pwa-node",
+"    request = "attach",
+"    name = "Attach",
+"    processId = require'dap.utils'.pick_process,
+"    cwd = "${workspaceFolder}",
+"  }}
+"end
 
-dapui.setup()
+"dapui.setup()
 
-EOF
+"EOF
 
 let test#strategy = "toggleterm"
 let test#custom_runners = {'Yarn': ['Yarn']}
@@ -1266,13 +1271,19 @@ set listchars=tab:▸\ ,eol:¬
 
 function! BuildProject(build_path)
   let path_string = a:build_path
+
+  if !filereadable(path_string)
+    echom "Error: Build file not found -> " . path_string
+    return
+  endif
+
   execute "set makeprg=" . path_string
   echom "Executing build @ " . path_string ."..."
   silent! execute 'make'
   echom ""
   redraw!
 endfunction
-map <leader><leader>b :call BuildProject('C:\athena\utils\compile_commands\build_editor_debug.cmd')<CR>
+map <leader><leader>b :call BuildProject('E:\athena\utils\compile_commands\build_editor_debug.cmd')<CR>
 
 " Toggle tabs and EOL
 map <leader>l :set list!<CR>
@@ -1416,7 +1427,7 @@ endif
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
 "  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
-  let command = 'set guifont=BerkeleyMono\ Nerd\ Font\ Mono:h' . s:fontsize
+  let command = 'set guifont=BerkeleyMono\ Nerd\ Font:h' . s:fontsize
   :execute command
   echom "Font Size Now:" . s:fontsize
 endfunction
