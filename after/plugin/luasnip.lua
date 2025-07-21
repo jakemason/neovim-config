@@ -101,7 +101,7 @@ end
 ---------------- JS ----------------
 ------------------------------------
 local js_snips = {
-  postfix(".log", { lambda("console.log(" .. lambda.POSTFIX_MATCH .. ");")}),
+  postfix(".log", { lambda("console.dir(" .. lambda.POSTFIX_MATCH .. ", { colors: true, depth: null });")}),
   postfix(".err", { lambda("console.error(" .. lambda.POSTFIX_MATCH .. "); // eslint-disable-line no-console")}),
 }
 

@@ -570,7 +570,6 @@ lua<<EOF
     "psalm",
   	"pyright",
 --    "lua_ls",
-  	"eslint",
   	"bashls",
     "emmet_ls",
 --  	"yamlls",
@@ -686,6 +685,28 @@ lua<<EOF
   	})
   end
 
+
+  local function eslint_on_attach(client, bufnr)
+    local bufopts = { noremap = true, silent = true, buffer = bufnr }
+    vim.keymap.set('n', '<leader>df', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set({ "n", "v" }, "K", vim.lsp.buf.hover, bufopts)
+
+    vim.api.nvim_command [[
+      autocmd BufWritePre <buffer> silent! lua vim.lsp.buf.format({
+        filter = function(client)
+          return client.name == "prettier"
+        end
+      })
+    ]]
+  end
+
+  require'lspconfig'.eslint.setup{
+  		on_attach = on_attach,
+  	  capabilities = capabilities,
+      on_attach = eslint_on_attach,
+  }
+
+
   require'lspconfig'.ruby_lsp.setup{
   		on_attach = on_attach,
   	  capabilities = capabilities,
@@ -746,7 +767,7 @@ lua<<EOF
   end
 
   require('lspconfig').prismals.setup{
-    cmd = { "/home/jake/.nvm/versions/node/v21.3.0/bin/prisma-language-server", "--stdio" },
+    cmd = { "/home/devja/.nvm/versions/node/v20.10.0/bin/prisma-language-server", "--stdio" },
     on_attach = on_attach,
     capabilities = capabilities
   }
@@ -754,8 +775,8 @@ lua<<EOF
   -- TODO -- Jake Mason | (12/06/23) 
   -- I want to be running this, but Joe requested that I make sure eslint does it first
   -- so that everyone has the same functionality.
-  vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
-  vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
+  -- vim.cmd [[autocmd BufWritePre *.ts silent! :OrganizeImports]]
+  -- vim.cmd [[autocmd BufWritePre *.tsx silent! :OrganizeImports]]
 
   -- Prisma format on save
   vim.cmd [[autocmd BufWritePre *.prisma silent! lua vim.lsp.buf.format()]]
@@ -1049,7 +1070,7 @@ require('lualine').setup {
     section_separators = { left = '', right = ''},
     disabled_filetypes = {},
     always_divide_middle = true,
-    globalstatus = false,
+    globalstatus = true,
   },
   sections = {
     lualine_a = {'mode'},
@@ -1173,7 +1194,8 @@ set clipboard^=unnamed,unnamedplus
 set showtabline=0
 set mouse=a
 set syntax=on
-au BufRead,BufNewFile *.prisma set filetype=prisma | syntax off
+" au BufRead,BufNewFile *.prisma set filetype=prisma | syntax off
+autocmd FileType prisma setlocal nospell
 
 
 " Security
@@ -1294,6 +1316,8 @@ let g:NERDTreeNodeDelimiter = "\u00a0"
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
+" Sets the width of the pane on the left
+let g:NERDTreeWinSize=25
 autocmd FileType nerdtree syntax enable
 
 if exists('g:loaded_webdevicons')
@@ -1328,6 +1352,19 @@ if has('persistent_undo')
     set undofile
 endif
 
+
+" When using `dd` in the quickfix list, remove the item from the quickfix list.
+function! RemoveQFItem()
+  let curqfidx = line('.') - 1
+  let qfall = getqflist()
+  call remove(qfall, curqfidx)
+  call setqflist(qfall, 'r')
+  execute curqfidx + 1 . "cfirst"
+  :copen
+endfunction
+:command! RemoveQFItem :call RemoveQFItem()
+" Use map <buffer> to only map dd in the quickfix window. Requires +localmap
+autocmd FileType qf map <buffer> dd :RemoveQFItem<cr>
 
 " Set Terminal Colors
 " These terminal colors are important with anything that
@@ -1416,7 +1453,7 @@ endif
 function! AdjustFontSize(amount)
   let s:fontsize = s:fontsize+a:amount
 "  let command = 'set guifont=JetBrainsMono\ NF:h' . s:fontsize
-  let command = 'set guifont=BerkeleyMono\ Nerd\ Font\ Mono:h' . s:fontsize
+  let command = 'set guifont=BerkeleyMono\ Nerd\ Font:h' . s:fontsize
   :execute command
   echom "Font Size Now:" . s:fontsize
 endfunction
@@ -1531,13 +1568,5 @@ endfunction
 "                  COPILOT CONFIG                     "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 lua vim.g.copilot_assume_mapped = true
-"lua vim.api.nvim_set_keymap('i', '<C-/>', 'copilot#Accept("<CR>")', {expr=true, silent=true})
-lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr = true, silent = true, noremap = true})
-lua<<EOF
-vim.cmd([[
-  augroup copilot_keymap
-    autocmd!
-    autocmd VimEnter * lua vim.api.nvim_set_keymap('i', '<C-CR>', 'copilot#Accept("<CR>")', {expr = true, silent = true, noremap = true})
-  augroup END
-]])
-EOF
+" This "C-_" is a special mapping required to map "Ctrl + /" 
+lua vim.api.nvim_set_keymap('i', '<C-_>', 'copilot#Accept("<CR>")', {expr = true, silent = true, noremap = true})
