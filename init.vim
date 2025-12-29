@@ -523,7 +523,8 @@ lua<<EOF
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
   require("mason").setup();
-  require("mason-lspconfig").setup()
+  require("mason-lspconfig").setup(
+  {automatic_installation =true})
   -- replaced by mason.nvim
   -- require("nvim-lsp-installer").setup {
   --  automatic_installation = true
