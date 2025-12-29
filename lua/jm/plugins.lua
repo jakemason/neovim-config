@@ -38,7 +38,13 @@ return {
       require("gitsigns").setup()
     end,
   },
-  { "f-person/git-blame.nvim", lazy = true },
+  { 
+    "f-person/git-blame.nvim", 
+    lazy = false,
+    config = function()
+      require("jm.gitblame")
+    end,
+  },
 
   -- Treesitter
   {
