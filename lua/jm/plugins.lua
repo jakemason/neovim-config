@@ -89,7 +89,8 @@ return {
 
   -- Motion
   {
-    "ggandor/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim",
+    -- "ggandor/leap.nvim", -- deprecated, moved to above url
     lazy = false,
     config = function()
       require("leap").add_default_mappings()
@@ -191,7 +192,7 @@ return {
   { "aserebryakov/vim-todo-lists", ft = "todo" },
 
   -- Copilot + Doge
-  { "github/copilot.vim", lazy = true },
+  { "github/copilot.vim", lazy = false },
   { "kkoomen/vim-doge", build = ":call doge#install()", lazy = true },
 
   -- vim-test

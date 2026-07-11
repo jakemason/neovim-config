@@ -61,6 +61,9 @@ vim.g.netrw_liststyle = 3
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = "noma nomod nu nowrap ro nobl"
 
+-- font
+opt.guifont = "BerkeleyMono Nerd Font"
+
 -- Tag matching parity
 vim.cmd("runtime! macros/matchit.vim")
 
@@ -120,4 +123,5 @@ if vim.g.neovide then
   vim.g.neovide_cursor_trail_length = 0.10
   vim.g.neovide_remember_window_size = 1
   vim.g.neovide_refresh_rate = 140
+  vim.g.neovide_scroll_animation_length = 0
 end
