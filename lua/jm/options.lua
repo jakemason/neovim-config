@@ -62,7 +62,7 @@ vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = "noma nomod nu nowrap ro nobl"
 
 -- font
-opt.guifont = "BerkeleyMono Nerd Font"
+opt.guifont = "BerkeleyMono Nerd Font:h13"
 
 -- Tag matching parity
 vim.cmd("runtime! macros/matchit.vim")

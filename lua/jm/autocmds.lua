@@ -41,8 +41,17 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- Auto-open/close quickfix + loclist (parity)
-vim.api.nvim_create_autocmd("QuickFixCmdPost", { pattern = "[^l]*", command = "nested cwindow" })
-vim.api.nvim_create_autocmd("QuickFixCmdPost", { pattern = "l*", command = "nested lwindow" })
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = "[^l]*",
+  nested = true,
+  command = "cwindow",
+})
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = "l*",
+  nested = true,
+  command = "lwindow",
+})
 
 -- Neoformat on save (parity)
 vim.api.nvim_create_augroup("fmt", { clear = true })
