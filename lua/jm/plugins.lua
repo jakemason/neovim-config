@@ -160,7 +160,32 @@ return {
   -- C/C++ tooling
   { "jackguo380/vim-lsp-cxx-highlight", lazy = true, ft = { "c", "cpp" } },
   { "rhysd/vim-clang-format", lazy = true, ft = { "c", "cpp" } },
-  { "jakemason/ouroboros.nvim", lazy = false },
+  { "jakemason/ouroboros.nvim", lazy = false, 
+  config = function()
+-- these are the defaults, customize as desired
+require('ouroboros').setup({
+    extension_preferences_table = {
+          -- Higher numbers are a heavier weight and thus preferred.
+          -- In the following, .c would prefer to open .h before .hpp
+          c = {h = 2, hpp = 1},
+          h = {c = 2, cpp = 1},
+          cpp = {hpp = 2, h = 1},
+          hpp = {cpp = 1, c = 2},
+
+          -- Ouroboros supports any combination of filetypes you like, simply
+          -- add them as desired:
+          -- myext = { myextsrc = 2, myextoldsrc = 1},
+          -- tpp = {hpp = 2, h = 1},
+          -- inl = {cpp = 3, hpp = 2, h = 1},
+          -- cu = {cuh = 3, hpp = 2, h = 1},
+          -- cuh = {cu = 1}
+    },
+    -- if this is true and the matching file is already open in a pane, we'll
+    -- switch to that pane instead of opening it in the current buffer
+    switch_to_open_pane_if_possible = false,
+})
+  end
+},
 
   -- Language syntax
   { "ziglang/zig.vim", ft = "zig" },
@@ -192,7 +217,7 @@ return {
   { "aserebryakov/vim-todo-lists", ft = "todo" },
 
   -- Copilot + Doge
-  { "github/copilot.vim", lazy = false },
+  -- { "github/copilot.vim", lazy = false },
   { "kkoomen/vim-doge", build = ":call doge#install()", lazy = true },
 
   -- vim-test
@@ -233,4 +258,147 @@ return {
 
   -- Rust tools (kept for parity)
   { "simrat39/rust-tools.nvim", lazy = true },
+
+  {
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = {
+      interactions = {
+        chat = {
+          adapter = {
+            name = "ollama",
+            model = "qwen2.5-coder:14b",
+          },
+        },
+
+        inline = {
+          adapter = {
+            name = "ollama",
+            model = "qwen2.5-coder:14b",
+          },
+        },
+
+        cmd = {
+          adapter = {
+            name = "ollama",
+            model = "qwen2.5-coder:14b",
+          },
+        },
+      },
+
+prompt_library = {
+  ["Edit current buffer"] = {
+    interaction = "chat",
+    description = "Open a chat that edits the current buffer",
+
+    opts = {
+      alias = "edit_buffer",
+    },
+
+    prompts = {
+      {
+        role = "user",
+        content = [[
+@{insert_edit_into_file} #{buffer}
+
+Modify the current buffer directly whenever I request code changes.
+Use the file-editing tool rather than returning replacement code in chat.
+Preserve unrelated code.
+]],
+      },
+    },
+  },
+},
+
+      adapters = {
+        http = {
+          ollama = function()
+            return require("codecompanion.adapters").extend("ollama", {
+              env = {
+                url = "http://localhost:11434",
+              },
+
+              schema = {
+                model = {
+                  default = "qwen2.5-coder:14b",
+                },
+
+                num_ctx = {
+                  default = 16384,
+                },
+
+                temperature = {
+                  default = 0.2,
+                },
+              },
+            })
+          end,
+        },
+      },
+    },
+
+    keys = {
+      {
+        "<leader>ac",
+        "<cmd>CodeCompanionChat Toggle<cr>",
+        desc = "AI chat",
+      },
+      {
+        "<leader>aa",
+        "<cmd>CodeCompanionActions<cr>",
+        desc = "AI actions",
+      },
+      {
+        "<leader>ai",
+        "<cmd>CodeCompanion<cr>",
+        mode = { "n", "v" },
+        desc = "AI inline edit",
+      },
+{
+  "<leader>ae",
+  "<cmd>CodeCompanion /edit_buffer<cr>",
+  desc = "AI edit current buffer",
+},
+    },
+
+  },
+
+
+  {
+    "milanglacier/minuet-ai.nvim",
+    dependencies = {
+      "hrsh7th/nvim-cmp",
+    },
+
+    config = function()
+      require("minuet").setup({
+        provider = "openai_fim_compatible",
+
+        n_completions = 1,
+        context_window = 2048,
+
+        provider_options = {
+          openai_fim_compatible = {
+            name = "Ollama",
+            end_point = "http://localhost:11434/v1/completions",
+            api_key = "TERM",
+            model = "qwen2.5-coder:7b",
+
+            optional = {
+              max_tokens = 128,
+              temperature = 0.2,
+              top_p = 0.9,
+            },
+          },
+        },
+
+        -- Disable Minuet's separate ghost-text interface.
+        virtualtext = {
+          auto_trigger_ft = {},
+        },
+      })
+    end,
+  }
 }

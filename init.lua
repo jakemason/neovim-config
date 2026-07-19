@@ -13,6 +13,11 @@
 vim.g.mapleader = "\\"
 vim.g.maplocalleader = "\\"
 
+if vim.g.neovide then
+  -- I don't need this stupid animated progress bar
+  vim.g.neovide_progress_bar_enabled = false
+end
+
 vim.keymap.set("n", "<leader><leader>b", function()
   require("jm.athena").run([[E:\Athena\utils\compile_commands\build_editor_debug.cmd]])
 end, { silent = true })

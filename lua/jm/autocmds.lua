@@ -54,14 +54,14 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 })
 
 -- Neoformat on save (parity)
-vim.api.nvim_create_augroup("fmt", { clear = true })
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = "fmt",
-  pattern = "*",
-  callback = function()
-    pcall(vim.cmd, "silent! undojoin | Neoformat")
-  end,
-})
+-- vim.api.nvim_create_augroup("fmt", { clear = true })
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   group = "fmt",
+--   pattern = "*",
+--   callback = function()
+--     pcall(vim.cmd, "silent! undojoin | Neoformat")
+--   end,
+-- })
 
 -- Alphabetize blocks on save (parity)
 local function process_block(start_line, end_line)

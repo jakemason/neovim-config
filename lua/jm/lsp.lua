@@ -147,9 +147,22 @@ cmp.setup({
 
   formatting = {
     format = lspkind.cmp_format({
-      mode = "symbol",
-      maxwidth = 50,
-      before = function(_, item)
+      mode = "symbol_text",
+      maxwidth = 80,
+
+      before = function(entry, item)
+        local source_labels = {
+          nvim_lsp = "[LSP]",
+          luasnip = "[Snippet]",
+          nvim_lsp_signature_help = "[Signature]",
+          minuet = "[AI]",
+          buffer = "[Buffer]",
+          path = "[Path]",
+          cmdline = "[Command]",
+        }
+
+        item.menu = source_labels[entry.source.name] or ("[" .. entry.source.name .. "]")
+
         return item
       end,
     }),
@@ -196,11 +209,27 @@ cmp.setup({
   }),
 
   sources = cmp.config.sources({
-    { name = "luasnip" },
-    { name = "nvim_lsp" },
-    { name = "nvim_lsp_signature_help" },
+    {
+      name = "nvim_lsp",
+      priority = 1000,
+    },
+    {
+      name = "luasnip",
+      priority = 900,
+    },
+    {
+      name = "nvim_lsp_signature_help",
+      priority = 850,
+    },
+    {
+      name = "minuet",
+      priority = 750,
+    },
   }, {
-    { name = "buffer" },
+    {
+      name = "buffer",
+      priority = 500,
+    },
   }),
 })
 
@@ -230,11 +259,14 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 -- LSP attachment
 -- ----------------------------------------------------------------------------
 
+-- Disable the legacy vim-clang-format save hook. Formatting is handled by LSP.
+vim.g["clang_format#auto_format"] = 0
+
+local lsp_attach_group =
+  vim.api.nvim_create_augroup("JmLspAttach", { clear = true })
+
 local lsp_format_group =
   vim.api.nvim_create_augroup("JmLspFormat", { clear = true })
-
-local eslint_format_group =
-  vim.api.nvim_create_augroup("JmEslintFormat", { clear = true })
 
 local function show_hover()
   vim.lsp.buf.hover({
@@ -248,7 +280,7 @@ local function show_signature_help()
   })
 end
 
-local function on_attach(client, bufnr)
+local function set_lsp_keymaps(bufnr)
   local opts = {
     noremap = true,
     silent = true,
@@ -278,22 +310,114 @@ local function on_attach(client, bufnr)
       desc = "LSP signature help",
     }
   ))
+end
 
-  if client:supports_method("textDocument/formatting", bufnr) then
-    vim.api.nvim_clear_autocmds({
-      group = lsp_format_group,
-      buf = bufnr,
-    })
+-- Prefer the formatter associated with each filetype when multiple LSP clients
+-- are attached to the same buffer.
+local preferred_formatters = {
+  c = { "clangd" },
+  cpp = { "clangd" },
+  objc = { "clangd" },
+  objcpp = { "clangd" },
+  javascript = { "prettier", "eslint", "ts_ls" },
+  javascriptreact = { "prettier", "eslint", "ts_ls" },
+  typescript = { "prettier", "eslint", "ts_ls" },
+  typescriptreact = { "prettier", "eslint", "ts_ls" },
+  css = { "prettier", "stylelint_lsp", "cssls" },
+  scss = { "prettier", "stylelint_lsp", "cssls" },
+  html = { "prettier", "html" },
+  json = { "prettier", "jsonls" },
+  jsonc = { "prettier", "jsonls" },
+  prisma = { "prismals" },
+  python = { "pyright" },
+  php = { "intelephense", "psalm" },
+  go = { "gopls" },
+  rust = { "rust_analyzer" },
+  zig = { "zls" },
+  ruby = { "ruby_lsp" },
+  graphql = { "graphql" },
+  sh = { "bashls" },
+  sql = { "sqlls" },
+}
 
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      group = lsp_format_group,
-      buf = bufnr,
-      callback = function()
-        vim.lsp.buf.format({
-          bufnr = bufnr,
-        })
-      end,
-    })
+local function get_format_client(bufnr)
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
+  local preferred = preferred_formatters[vim.bo[bufnr].filetype] or {}
+
+  local function can_format(client)
+    return client:supports_method("textDocument/formatting", bufnr)
+  end
+
+  for _, preferred_name in ipairs(preferred) do
+    for _, client in ipairs(clients) do
+      if client.name == preferred_name and can_format(client) then
+        return client
+      end
+    end
+  end
+
+  for _, client in ipairs(clients) do
+    if can_format(client) then
+      return client
+    end
+  end
+
+  return nil
+end
+
+local function setup_format_on_save(bufnr)
+  local existing = vim.api.nvim_get_autocmds({
+    group = lsp_format_group,
+    event = "BufWritePre",
+    buffer = bufnr,
+  })
+
+  if #existing > 0 then
+    return
+  end
+
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    group = lsp_format_group,
+    buffer = bufnr,
+    desc = "Format buffer using its preferred LSP client",
+    callback = function(args)
+      local client = get_format_client(args.buf)
+
+      if not client then
+        return
+      end
+
+      vim.lsp.buf.format({
+        bufnr = args.buf,
+        id = client.id,
+        async = false,
+        timeout_ms = 3000,
+      })
+    end,
+  })
+end
+
+local function on_attach(_, bufnr)
+  set_lsp_keymaps(bufnr)
+  setup_format_on_save(bufnr)
+end
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = lsp_attach_group,
+  desc = "Configure LSP keymaps and format-on-save",
+  callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+    if client then
+      on_attach(client, event.buf)
+    end
+  end,
+})
+
+-- Reconfigure clients that are already attached when this file is re-sourced.
+for _, client in ipairs(vim.lsp.get_clients()) do
+  for bufnr in pairs(client.attached_buffers) do
+    on_attach(client, bufnr)
   end
 end
 
@@ -303,7 +427,6 @@ end
 
 vim.lsp.config("*", {
   capabilities = capabilities,
-  on_attach = on_attach,
 })
 
 -- ----------------------------------------------------------------------------
@@ -485,34 +608,6 @@ vim.lsp.config("stylelint_lsp", {
 })
 
 -- ----------------------------------------------------------------------------
--- ESLint
--- ----------------------------------------------------------------------------
-
-vim.lsp.config("eslint", {
-  on_attach = function(client, bufnr)
-    on_attach(client, bufnr)
-
-    vim.api.nvim_clear_autocmds({
-      group = eslint_format_group,
-      buf = bufnr,
-    })
-
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      group = eslint_format_group,
-      buf = bufnr,
-      callback = function()
-        vim.lsp.buf.format({
-          bufnr = bufnr,
-          filter = function(format_client)
-            return format_client.name == "prettier"
-          end,
-        })
-      end,
-    })
-  end,
-})
-
--- ----------------------------------------------------------------------------
 -- Enable servers
 -- ----------------------------------------------------------------------------
 
@@ -528,32 +623,9 @@ for _, name in ipairs(servers) do
 end
 
 -- ----------------------------------------------------------------------------
--- Prisma format-on-save
--- ----------------------------------------------------------------------------
-
-local prisma_format_group =
-  vim.api.nvim_create_augroup("JmPrismaFormat", { clear = true })
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = prisma_format_group,
-  pattern = "*.prisma",
-  callback = function(args)
-    pcall(vim.lsp.buf.format, {
-      bufnr = args.buf,
-    })
-  end,
-})
-
--- ----------------------------------------------------------------------------
 -- clangd_extensions
 -- ----------------------------------------------------------------------------
 
 pcall(function()
-  require("clangd_extensions").setup({
-    server = {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      autostart = true,
-    },
-  })
+  require("clangd_extensions").setup({})
 end)
