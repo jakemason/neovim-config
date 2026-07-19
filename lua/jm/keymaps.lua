@@ -31,7 +31,7 @@ map("n", "<C-v>", '"+p', { noremap = true })
 
 -- Quick edit init.lua parity (was $MYVIMRC)
 map("n", "<leader><leader>e", function()
-  vim.cmd("edit " .. vim.fn.stdpath("config") .. "/init.lua")
+	vim.cmd("edit " .. vim.fn.stdpath("config") .. "/init.lua")
 end, { noremap = true, silent = true })
 
 -- Commentary parity

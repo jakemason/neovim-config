@@ -68,21 +68,21 @@ opt.guifont = "BerkeleyMono Nerd Font:h13"
 vim.cmd("runtime! macros/matchit.vim")
 
 -- Kanagawa terminal palette (parity for LazyGit / ToggleTerm)
-vim.g.terminal_color_0  = "#000000"
-vim.g.terminal_color_8  = "#808080"
-vim.g.terminal_color_1  = "#c34043"
-vim.g.terminal_color_9  = "#e82424"
-vim.g.terminal_color_2  = "#98bb6c"
+vim.g.terminal_color_0 = "#000000"
+vim.g.terminal_color_8 = "#808080"
+vim.g.terminal_color_1 = "#c34043"
+vim.g.terminal_color_9 = "#e82424"
+vim.g.terminal_color_2 = "#98bb6c"
 vim.g.terminal_color_10 = "#98bb6c"
-vim.g.terminal_color_3  = "#dca561"
+vim.g.terminal_color_3 = "#dca561"
 vim.g.terminal_color_11 = "#e6c384"
-vim.g.terminal_color_4  = "#658593"
+vim.g.terminal_color_4 = "#658593"
 vim.g.terminal_color_12 = "#7fb4ca"
-vim.g.terminal_color_5  = "#938aa9"
+vim.g.terminal_color_5 = "#938aa9"
 vim.g.terminal_color_13 = "#957fb8"
-vim.g.terminal_color_6  = "#7aa89f"
+vim.g.terminal_color_6 = "#7aa89f"
 vim.g.terminal_color_14 = "#7e9cd8"
-vim.g.terminal_color_7  = "#c0c0c0"
+vim.g.terminal_color_7 = "#c0c0c0"
 vim.g.terminal_color_15 = "#f2f2f2"
 
 -- Closetag parity
@@ -97,10 +97,29 @@ vim.g.gitblame_date_format = "%b %Y"
 
 -- Gutentags exclude parity
 vim.g.gutentags_ctags_exclude = {
-  ".git", ".svn", ".hg", "bundle", "min", "vendor",
-  "*.min.*", "*.min", "*.map", "*.swp", "*.bak", "*.pyc",
-  "*.class", "*.sln", "*.Master", "*.csproj", "user",
-  "*.cache", "*.dll", "*.pdb", "tags", "cscope.*", "*.tar.*",
+	".git",
+	".svn",
+	".hg",
+	"bundle",
+	"min",
+	"vendor",
+	"*.min.*",
+	"*.min",
+	"*.map",
+	"*.swp",
+	"*.bak",
+	"*.pyc",
+	"*.class",
+	"*.sln",
+	"*.Master",
+	"*.csproj",
+	"user",
+	"*.cache",
+	"*.dll",
+	"*.pdb",
+	"tags",
+	"cscope.*",
+	"*.tar.*",
 }
 
 -- NERDTree parity
@@ -119,9 +138,9 @@ vim.g["clang_format#detect_style_file"] = 1
 
 -- Neovide parity
 if vim.g.neovide then
-  vim.g.neovide_cursor_animation_length = 0.0
-  vim.g.neovide_cursor_trail_length = 0.10
-  vim.g.neovide_remember_window_size = 1
-  vim.g.neovide_refresh_rate = 140
-  vim.g.neovide_scroll_animation_length = 0
+	vim.g.neovide_cursor_animation_length = 0.0
+	vim.g.neovide_cursor_trail_length = 0.10
+	vim.g.neovide_remember_window_size = 1
+	vim.g.neovide_refresh_rate = 140
+	vim.g.neovide_scroll_animation_length = 0
 end
